@@ -8,6 +8,8 @@ debug:
 
 clean:
 	rm -fr __pycache__
+	rm -fr src/__pycache__
+	rm -fr src/gui/__pycache__
 	rm -fr .venv
 	rm -fr .mypy_cache
 

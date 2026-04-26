@@ -1,0 +1,47 @@
+import pyray as pr
+import os
+
+
+class FileTree():
+    def __init__(self) -> None:
+        self.path = "."
+        self.view = pr.Rectangle(0, 0, 0, 0)
+        self.scroll = pr.Vector2(0, 0)
+
+    def get_dir(self, path: str) -> list:
+        not_included_dirs = ["__pycache__", ".git", ".venv", ".mypy_cache"]
+        dirs_list = [
+            d for d in os.listdir(path)
+            if os.path.isdir(os.path.join(path, d)) and d not in not_included_dirs
+        ]
+        return dirs_list
+
+    def get_files(self, path: str) -> list:
+        files_list = [
+            f for f in os.listdir(path)
+            if os.path.isfile(os.path.join(path, f))
+        ]
+        return files_list
+
+    def select_map(self) -> None:
+        dirs = self.get_dir(self.path)
+        files = self.get_files(self.path)
+        items_height = 35
+        total_content_height = (len(dirs) + len(files)) * items_height
+        map_selection_rect = pr.Rectangle(300, 300, 250, 300)
+        map_selection_content_rect = pr.Rectangle(0, 0, map_selection_rect.width - 20, total_content_height)
+        pr.gui_window_box(map_selection_rect, "Select map")
+        pr.gui_scroll_panel(map_selection_rect, "Select map", map_selection_content_rect, self.scroll, self.view)
+        current_y = self.view.y + self.scroll.y + 10
+        pr.begin_scissor_mode(
+            int(self.view.x), int(self.view.y), int(self.view.width), int(self.view.height)
+        )
+        for _, dir in enumerate(dirs):
+            if pr.gui_button(pr.Rectangle(self.view.x + 5, current_y, self.view.width - 10, 30), dir):
+                self.path = os.path.join(self.path, dir)
+                self.scroll.y = 0
+            current_y += items_height
+        for _, file in enumerate(files):
+            pr.gui_label(pr.Rectangle(self.view.x + 5, current_y, self.view.width, 30), file)
+            current_y += items_height
+        pr.end_scissor_mode()

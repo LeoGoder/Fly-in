@@ -7,6 +7,8 @@ class FileTree():
         self.path = "."
         self.view = pr.Rectangle(0, 0, 0, 0)
         self.scroll = pr.Vector2(0, 0)
+        self.dirs = self.get_dir(self.path)
+        self.files = self.get_files(self.path)
 
     def get_dir(self, path: str) -> list:
         not_included_dirs = ["__pycache__", ".git", ".venv", ".mypy_cache"]
@@ -24,10 +26,8 @@ class FileTree():
         return files_list
 
     def select_map(self) -> None:
-        dirs = self.get_dir(self.path)
-        files = self.get_files(self.path)
         items_height = 35
-        total_content_height = (len(dirs) + len(files)) * items_height
+        total_content_height = (len(self.dirs) + len(self.files)) * items_height
         map_selection_rect = pr.Rectangle(300, 300, 250, 300)
         map_selection_content_rect = pr.Rectangle(0, 0, map_selection_rect.width - 20, total_content_height)
         pr.gui_window_box(map_selection_rect, "Select map")
@@ -36,12 +36,14 @@ class FileTree():
         pr.begin_scissor_mode(
             int(self.view.x), int(self.view.y), int(self.view.width), int(self.view.height)
         )
-        for _, dir in enumerate(dirs):
-            if pr.gui_button(pr.Rectangle(self.view.x + 5, current_y, self.view.width - 10, 30), dir):
+        for _, dir in enumerate(self.dirs):
+            if pr.gui_label_button(pr.Rectangle(self.view.x + 5, current_y, self.view.width - 10, 30), f"#001# {dir}"):
                 self.path = os.path.join(self.path, dir)
                 self.scroll.y = 0
+                self.dirs = self.get_dir(self.path)
+                self.files = self.get_files(self.path)
             current_y += items_height
-        for _, file in enumerate(files):
-            pr.gui_label(pr.Rectangle(self.view.x + 5, current_y, self.view.width, 30), file)
+        for _, file in enumerate(self.files):
+            pr.gui_label_button(pr.Rectangle(self.view.x + 5, current_y, self.view.width, 30), f"#010#{file}")
             current_y += items_height
         pr.end_scissor_mode()

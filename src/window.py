@@ -4,13 +4,13 @@ from global_state import GlobalState
 
 class Window():
     def __init__(self) -> None:
-        self.width = 800
-        self.height = 800
+        self.width = pr.get_screen_width()
+        self.height = pr.get_screen_width()
         self.glob_state = GlobalState.START
 
     def start_window(self) -> None:
         pr.set_config_flags(pr.ConfigFlags.FLAG_WINDOW_RESIZABLE)
-        pr.init_window(800, 800, "Fly-in")
+        pr.init_window(self.width, self.height, "Fly-in")
         self.main_loop()
 
     def main_loop(self) -> None:
@@ -19,6 +19,6 @@ class Window():
             pr.begin_drawing()
             pr.clear_background(pr.SKYBLUE)
             if (self.glob_state == GlobalState.START):
-                file_tree.select_map()
+                file_tree.select_map(self.width, self.height)
             pr.end_drawing()
         pr.close_window()

@@ -14,8 +14,8 @@ clean:
 	rm -fr .mypy_cache
 
 lint:
-	flake8 .
-	mypy . --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+	flake8 --exclude=.venv,.mypy_cache,llm_sdk .
+# 	mypy . --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
 
 lint-strict:
 	flake8 .

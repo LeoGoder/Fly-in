@@ -1,14 +1,20 @@
+from global_state import GlobalState
 
 
 class Parsing:
-    def __init__(self, path: str) -> None:
-        self.file_path = path
+    def __init__(self) -> None:
+        pass
 
     def is_comments(self) -> None:
         pass
 
-    def check_file(self) -> None:
-        with open(self.file_path, 'r') as f:
-            for line in f.readline():
-                line_split = line.split()
-                print(line_split)
+    def check_file(self, path: str, global_state: dict) -> None:
+        try:
+            with open(path, 'r') as f:
+                for line in f.readlines():
+                    line_split = line.split()
+                    print(line_split)
+        except (FileNotFoundError, PermissionError, UnicodeDecodeError) as e:
+            print(f"Caught error {e}")
+        global_state["Current"] = GlobalState.SIMULATION
+

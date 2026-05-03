@@ -1,6 +1,7 @@
 import pyray as pr
 from gui.file_tree import FileTree
 from global_state import GlobalState
+from parsing import Parsing
 
 
 class Window():
@@ -19,6 +20,7 @@ class Window():
 
     def main_loop(self) -> None:
         file_tree = FileTree()
+        parsing = Parsing()
         pr.set_target_fps(120)
         while not pr.window_should_close():
             pr.begin_drawing()
@@ -26,6 +28,6 @@ class Window():
             if (self.glob_state["Current"] == GlobalState.START):
                 self.file_choose = file_tree.select_map(self.width, self.height, self.glob_state)
             if (self.glob_state["Current"] == GlobalState.PARSING):
-                print(self.file_choose)
+                parsing.check_file(self.file_choose, self.glob_state)
             pr.end_drawing()
         pr.close_window()

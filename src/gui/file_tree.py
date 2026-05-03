@@ -34,7 +34,7 @@ class FileTree():
         win_width = pr.get_screen_width()
         items_height = 35
         total_content_height = (len(self.dirs) + len(self.files)) * items_height
-        map_selection_rect = pr.Rectangle(win_width / 2, win_height / 2, 250, 300)
+        map_selection_rect = pr.Rectangle((win_width / 2) - 125, win_height / 2, 250, 300)
         map_selection_content_rect = pr.Rectangle(0, 0, map_selection_rect.width - 20, total_content_height)
         pr.gui_window_box(map_selection_rect, "Select map")
         pr.gui_scroll_panel(map_selection_rect, "Select map", map_selection_content_rect, self.scroll, self.view)

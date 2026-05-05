@@ -5,40 +5,36 @@ from global_state import GlobalState
 
 class FileTree():
     def __init__(self) -> None:
-        self.path = "."
-        self.view = pr.Rectangle(0, 0, 0, 0)
-        self.scroll = pr.Vector2(0, 0)
-        self.dirs = self.get_dir(self.path)
-        self.files = self.get_files(self.path)
-        self.last_path = []
+        self.path: str = "."
+        self.view: pr.Rectangle = pr.Rectangle(0, 0, 0, 0)
+        self.scroll: pr.Vector2 = pr.Vector2(0, 0)
+        self.dirs: list = self.get_dir(self.path)
+        self.files: list = self.get_files(self.path)
+        self.last_path: list = []
 
     def get_dir(self, path: str) -> list:
-        not_included_dirs = ["__pycache__", ".git", ".venv", ".mypy_cache"]
-        dirs_list = [
+        not_included_dirs: list = ["__pycache__", ".git", ".venv", ".mypy_cache"]
+        dirs_list: list = [
             d for d in os.listdir(path)
             if os.path.isdir(os.path.join(path, d)) and d not in not_included_dirs
         ]
         return dirs_list
 
     def get_files(self, path: str) -> list:
-        files_list = [
+        files_list: list = [
             f for f in os.listdir(path)
             if os.path.isfile(os.path.join(path, f))
         ]
         return files_list
 
     def select_map(self, win_width: int, win_height: int, global_state: dict) -> str:
-        # TODO: find a way to update only when screen is resize
-        # if pr.is_window_resized():
-        win_height = pr.get_screen_height()
-        win_width = pr.get_screen_width()
-        items_height = 35
-        total_content_height = (len(self.dirs) + len(self.files)) * items_height
-        map_selection_rect = pr.Rectangle((win_width / 2) - 125, win_height / 2, 250, 300)
-        map_selection_content_rect = pr.Rectangle(0, 0, map_selection_rect.width - 20, total_content_height)
+        items_height: int = 35
+        total_content_height: int = (len(self.dirs) + len(self.files)) * items_height
+        map_selection_rect: pr.Rectangle = pr.Rectangle((win_width / 2) - 125, win_height / 2, 250, 300)
+        map_selection_content_rect: pr.Rectangle = pr.Rectangle(0, 0, map_selection_rect.width - 20, total_content_height)
         pr.gui_window_box(map_selection_rect, "Select map")
         pr.gui_scroll_panel(map_selection_rect, "Select map", map_selection_content_rect, self.scroll, self.view)
-        current_y = self.view.y + self.scroll.y + 10
+        current_y: float = self.view.y + self.scroll.y + 10
         pr.begin_scissor_mode(
             int(self.view.x), int(self.view.y), int(self.view.width), int(self.view.height)
         )

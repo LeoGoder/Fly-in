@@ -2,7 +2,7 @@ from window import Window
 
 
 def main() -> None:
-    window = Window()
+    window: Window = Window()
     window.start_window()
 
 

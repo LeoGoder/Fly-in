@@ -48,11 +48,11 @@ class Window():
         pr.draw_text_pro(pr.get_font_default(), "By Lgoderne", pr.Vector2(int(self.width * 0.5) + 94, 130.0), pr.Vector2(0.0, 0.0), -45, self.font_size, 2, pr.YELLOW)
         self.file_choose = self.file_tree.select_map(self.width, self.height, self.glob_state)
         if self.current_frame % 2 == 0:
-            if self.reverse_title == False:
+            if self.reverse_title is False:
                 self.font_size += 1
             if self.font_size > 34:
                 self.reverse_title = True
-            if self.reverse_title == True:
+            if self.reverse_title is True:
                 self.font_size -= 1
             if self.font_size < 16:
                 self.reverse_title = False
@@ -83,11 +83,13 @@ class Window():
             pr.begin_drawing()
             pr.clear_background(pr.BLACK)
             pr.begin_shader_mode(self.shader)
+            pr.draw_rectangle(0, 0, self.width, self.height, pr.WHITE)
+            pr.end_shader_mode()
             pr.begin_mode_3d(self.g_cam)
             pr.end_mode_3d()
-            pr.end_shader_mode()
             self.gui_scene_manager()
             pr.end_drawing()
             self.frame_counter()
-        pr.close_window()
         pr.unload_shader(self.shader)
+        pr.close_window()
+

@@ -20,12 +20,12 @@ void	main() {
 	float speed = 35.0;
 
 	// Nebuleuse 1
-	float pattern1 = sin(uv.x * 3.0 + time * 0.2) + sin(uv.y * 4.0 - time * 0.1);
+	float pattern1 = sin(uv.x * 3.0 + (time * speed * 0.05)) + sin(uv.y * 4.0 - (time * speed * 0.05));
     pattern1 = pattern1 * 0.25 + 0.5;
     vec3 nebula1 = vec3(0.0, 0.3, 0.4) * pattern1;
 
 	// Nebuleuse 2
-    float pattern2 = sin(uv.x * 5.0 - time * 0.3) + sin(uv.y * 3.0 + time * 0.2);
+    float pattern2 = sin(uv.x * 5.0 - (time * speed * 0.05)) + sin(uv.y * 3.0 + (time * speed * 0.05));
     pattern2 = pattern2 * 0.25 + 0.5;
     vec3 nebula2 = vec3(0.3, 0.0, 0.5) * pattern2;
 

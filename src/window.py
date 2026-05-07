@@ -40,7 +40,7 @@ class Window():
     def start_window(self) -> None:
         pr.set_config_flags(pr.ConfigFlags.FLAG_WINDOW_RESIZABLE)
         pr.init_window(self.width, self.height, "Fly-in")
-        self.shader: pr.Shader = pr.load_shader(pr.ffi.NULL, "src/shader_sky.fs")
+        self.shader: pr.Shader = pr.load_shader("", "src/shader_sky.fs")
         self.main_loop()
 
     def start_gui_scene(self) -> None:
@@ -64,7 +64,7 @@ class Window():
         if (self.glob_state["Current"] == GlobalState.START):
             self.start_gui_scene()
         if (self.glob_state["Current"] == GlobalState.PARSING):
-            self.parsing.check_file(self.file_choose, self.glob_state)
+            self.parsing.check_file(self.file_choose, self.glob_state, self)
 
     def frame_counter(self):
         self.current_frame += 1

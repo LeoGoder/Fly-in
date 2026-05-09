@@ -1,6 +1,5 @@
 # Easy Level 1: Simple linear path
 
-start_hub: start 0 0 [color=green]
 nb_drones: 2
 
 start_hub: start 0 0 [color=green]

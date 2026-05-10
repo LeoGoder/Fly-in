@@ -36,6 +36,7 @@ class Window():
         self.max_fps: int = 60
         self.scale: int = 1
         self.shader: pr.Shader
+        self.data: list = [[], []]
 
     def start_window(self) -> None:
         pr.set_config_flags(pr.ConfigFlags.FLAG_WINDOW_RESIZABLE)
@@ -64,7 +65,9 @@ class Window():
         if (self.glob_state["Current"] == GlobalState.START):
             self.start_gui_scene()
         if (self.glob_state["Current"] == GlobalState.PARSING):
-            self.parsing.check_file(self.file_choose, self.glob_state, self)
+            self.data = self.parsing.check_file(self.file_choose, self.glob_state, self)
+        if (self.glob_state["Current"] == GlobalState.SIMULATION):
+            pass
 
     def frame_counter(self):
         self.current_frame += 1
@@ -75,6 +78,9 @@ class Window():
         pr.set_target_fps(self.max_fps)
         res_loc = pr.get_shader_location(self.shader, "resolution")
         time_loc = pr.get_shader_location(self.shader, "time")
+        font = pr.load_font("assets/PixelOperator.ttf")
+        pr.gui_load_style("assets/genesis.rgs")
+        pr.gui_set_font(font)
         while not pr.window_should_close():
             self.width = pr.get_screen_width()
             self.height = pr.get_screen_height()
@@ -86,10 +92,13 @@ class Window():
             pr.draw_rectangle(0, 0, self.width, self.height, pr.WHITE)
             pr.end_shader_mode()
             pr.begin_mode_3d(self.g_cam)
+            if (self.glob_state["Current"] == GlobalState.SIMULATION):
+                self.mode3d_scene_manager()
             pr.end_mode_3d()
             self.gui_scene_manager()
             pr.end_drawing()
             self.frame_counter()
         pr.unload_shader(self.shader)
+        pr.unload_font(font)
         pr.close_window()
 

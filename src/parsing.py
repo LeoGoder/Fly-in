@@ -21,9 +21,35 @@ class Parsing:
         pass
 
     def add_hub(self, data: list, temp_nb_drones: int, r_data: list) -> int:
+        hub_option: list = ["color", "max_drones", "zone"]
+        hub_option_parsed: dict = {
+            "zone": "normal",
+            "color": "None",
+            "max_drones": 1
+        }
+        # print(data)
+        if len(data) > 4:
+            args = data[4]
+            if ("[" not in args or "]" not in args):
+                self.draw_error = True
+                self.error_text = "Error with bracket"
+                return 1
+            args = args.replace('[', '').replace(']', '')
+            args = args.split(',')
+            try:
+                for arg in args:
+                    arg = arg.split("=")
+                    hub_option_parsed.update({arg[0]: arg[1]})
+            except (IndexError) as e:
+                print(f"Caught error {e}")
+                self.draw_error = True
+                self.error_text = str(e)
+                return 1
+            # print(hub_option_parsed)
         if data[0] == "start_hub:":
             try:
-                hub_instance = Hub(name=data[1], x=data[2], y=data[3], nb_drones=int(temp_nb_drones), type_hub="start_hub")
+                
+                hub_instance = Hub(name=data[1], x=data[2], y=data[3], nb_drones=int(temp_nb_drones), type_hub="start_hub", zone=hub_option_parsed["zone"], color=hub_option_parsed["color"], max_drones=hub_option_parsed["max_drones"])
             except (ValueError, IndexError) as e:
                 print(f"Caught error {e}")
                 self.draw_error = True
@@ -32,7 +58,7 @@ class Parsing:
             r_data[0].append(hub_instance)
         elif data[0] == "hub:":
             try:
-                hub_instance = Hub(name=data[1], x=data[2], y=data[3], type_hub="hub")
+                hub_instance = Hub(name=data[1], x=data[2], y=data[3], type_hub="hub", zone=hub_option_parsed["zone"], color=hub_option_parsed["color"], max_drones=hub_option_parsed["max_drones"])
             except (ValueError, IndexError) as e:
                 print(f"Caught error {e}")
                 self.draw_error = True
@@ -41,7 +67,7 @@ class Parsing:
             r_data[0].append(hub_instance)
         elif data[0] == "end_hub:":
             try:
-                hub_instance = Hub(name=data[1], x=data[2], y=data[3], type_hub="end_hub")
+                hub_instance = Hub(name=data[1], x=data[2], y=data[3], type_hub="end_hub",  zone=hub_option_parsed["zone"], color=hub_option_parsed["color"], max_drones=hub_option_parsed["max_drones"])
             except (ValueError, IndexError) as e:
                 print(f"Caught error {e}")
                 self.draw_error = True
@@ -106,33 +132,27 @@ class Parsing:
                 count_start_hub += raw_data[i][0].count("start_hub:")
                 count_end_hub += raw_data[i][0].count("end_hub:")
                 if len(raw_data[i]) > 4:
+                    hub_option = ["color", "max_drones", "zone"]
                     raw_data[i][4:] = [",".join(raw_data[i][4:])]
-                # for element in raw_data[i]:
-                #     braces_open += element.count("[")
-                #     braces_close += element.count("]")
-                print(raw_data[i])
-            # if (braces_open == 0 and braces_close == 0) or (braces_open != braces_close):
-            #     self.draw_error = True
-            #     self.error_text = "Error on parsing missing brackets or too many brackets"
             if count_start_hub != 1:
                 self.draw_error = True
                 self.error_text = "Error on parsing number of start_hub not equal to 1"
             if count_end_hub != 1:
                 self.draw_error = True
                 self.error_text = "Error on parsing number of end_hub not equal to 1"
-            print(braces_open)
-            print(braces_close)
+            # print(braces_open)
+            # print(braces_close)
 
         # create new data for data list
         if self.draw_error is False:
             for data in raw_data:
-                print(data)
+                # print(data)
                 self.add_hub(data, temp_nb_drones, r_data)
                 self.add_connection(data, r_data)
             for hub in r_data[0]:
-                print(hub.name)
-            print(len(r_data[0]))
-            # for hub in r_data[1]:
+                print(hub.name, hub.x, hub.y, hub.type_hub, hub.zone, hub.color, hub.max_drones)
+            # print(len(r_data[0]))
+            # # for hub in r_data[1]:
                 # print("from: ", hub.from_hub)
                 # print("to: ", hub.to_hub)
             print(r_data)

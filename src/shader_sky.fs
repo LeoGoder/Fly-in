@@ -30,7 +30,7 @@ void	main() {
     color += nebula1 + nebula2;
 	vec2 offset = vec2(0.0, time * speed);
 	vec2 grid = floor((gl_FragCoord.xy + offset) * 0.5);
-	if (hash(grid)> 0.990) {
+	if (hash(grid)> 0.995) {
 		float sparkle = 1.0;
 		// color.r += 0.1;
 		// color.g = abs(sin(time));

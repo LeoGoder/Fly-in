@@ -9,7 +9,7 @@ class Cam():
     def __init__(self) -> None:
         self.cam: pr.Camera3D = pr.Camera3D()
         self.cam.fovy = 45
-        self.cam.position = pr.Vector3(0.0, 10.0, 20.0)
+        self.cam.position = pr.Vector3(0.0, 20.0, 20.0)
         self.cam.projection = pr.CameraProjection.CAMERA_PERSPECTIVE
         self.cam.target = pr.Vector3(0.0, 0.0, 0.0)       
         self.cam.up = pr.Vector3(0.0, 1.0, 0.0)
@@ -20,17 +20,17 @@ class Cam():
     def move_cam(self, dt: float) -> None:
         speed = 10.0 * dt
         if pr.is_key_down(pr.KeyboardKey.KEY_A):
-            self.cam.target.x += speed
-            self.cam.position.x += speed
-        if pr.is_key_down(pr.KeyboardKey.KEY_D):
             self.cam.target.x -= speed
             self.cam.position.x -= speed
+        if pr.is_key_down(pr.KeyboardKey.KEY_D):
+            self.cam.target.x += speed
+            self.cam.position.x += speed
         if pr.is_key_down(pr.KeyboardKey.KEY_W):
-            self.cam.target.z += speed
-            self.cam.position.z += speed
-        if pr.is_key_down(pr.KeyboardKey.KEY_S):
             self.cam.target.z -= speed
             self.cam.position.z -= speed
+        if pr.is_key_down(pr.KeyboardKey.KEY_S):
+            self.cam.target.z += speed
+            self.cam.position.z += speed
         pr.update_camera(self.cam, pr.CameraProjection.CAMERA_PERSPECTIVE)
 
 
@@ -77,8 +77,8 @@ class Window():
         self.cam.move_cam(self.dt)
         for hub in data[0]:
             position = pr.Vector3(int(hub.x) * 5, 0.0, int(hub.y) * 5)
-            pr.draw_cube(position, 2.0, 2.0, 2.0, pr.PURPLE)
-            pr.draw_cube_wires(position, 2.0, 2.0, 2.0, pr.BLACK)
+            pr.draw_cube(position, 1.5, 1.5, 1.5, pr.PURPLE)
+            pr.draw_cube_wires(position, 1.5, 1.5, 1.5, pr.BLACK)
         for connection in data[1]:
             from_hub: Hub
             to_hub: Hub

@@ -3,6 +3,7 @@ from gui.error_popup import ErrorPopup
 import pyray as pr
 from hub import Hub
 from connection import Connection
+import os
 
 
 class Parsing:
@@ -16,12 +17,25 @@ class Parsing:
             return False
         return True
 
-    def check_zone_type(self) -> bool:
+    def check_zone_type(self, zone_verif: str) -> bool:
         all_zone_possible: list = ["normal", "blocked", "restricted", "priority"]
-        pass
+        if zone_verif not in all_zone_possible:
+            return False
+        return True
+
+    def check_options_hub(self, option_check: str) -> bool:
+        all_options_hub = ["zone", "color", "max_drones"]
+        if option_check not in all_options_hub:
+            return False
+        return True
+
+    def check_options_connection(self, option_check: str) -> bool:
+        all_options_connection = ["max_link_capacity"]
+        if option_check not in all_options_connection:
+            return False
+        return True
 
     def add_hub(self, data: list, temp_nb_drones: int, r_data: list) -> int:
-        hub_option: list = ["color", "max_drones", "zone"]
         hub_option_parsed: dict = {
             "zone": "normal",
             "color": "None",
@@ -39,6 +53,12 @@ class Parsing:
             try:
                 for arg in args:
                     arg = arg.split("=")
+                    if self.check_options_hub(arg[0]) == False:
+                        self.draw_error = True
+                        self.error_text = f"Error on hub option {arg[0]} in invalid"
+                        break
+                    if arg:
+                        pass
                     hub_option_parsed.update({arg[0]: arg[1]})
             except (IndexError) as e:
                 print(f"Caught error {e}")
@@ -74,13 +94,42 @@ class Parsing:
                 self.error_text = str(e)
                 return 1
             r_data[0].append(hub_instance)
+        if len(r_data[0]) > 0:
+            if self.check_zone_type(r_data[0][-1].zone) == False:
+                self.draw_error = True
+                self.error_text = f"Error on parsing invalid zone entered for {r_data[0][-1].name}"
+                return 1
         return 0
     
     def add_connection(self, data: list, r_data: list) -> int:
+        options_default = {"max_link_capacity": 1}
+        # print(data)
+        if data[0] == "connection:":
+            if len(data) > 2:
+                option = data[2]
+                if ("[" not in option or "]" not in option):
+                    self.draw_error = True
+                    self.error_text = "Error with bracket in connection"
+                    return 1
+                option = option.replace('[', '').replace(']', '')
+                try:
+                    option = option.split("=")
+                    print(option[0], option[1])
+                    if self.check_options_connection(option[0]) == False:
+                        self.draw_error = True
+                        self.error_text = f"Error on connection option {option[0]} is invalid"
+                    if option:
+                        pass
+                    options_default.update({option[0]: option[1]})
+                except (IndexError) as e:
+                    print(f"Caught error {e}")
+                    self.draw_error = True
+                    self.error_text = str(e)
+                    return 1
         if data[0] == "connection:":
             data_split = data[1].split("-")
             try:
-                connection_instance = Connection(from_hub=data_split[0], to_hub=data_split[1])
+                connection_instance = Connection(from_hub=data_split[0], to_hub=data_split[1], max_link_capacity=options_default["max_link_capacity"])
             except (ValueError, IndexError) as e:
                 print(f"Caught error {e}")
                 self.draw_error = True
@@ -103,7 +152,7 @@ class Parsing:
                         # print(line_split)
                         if self.is_comments(line_split) and line_split != []:
                             raw_data.append(line_split)
-                        
+               
             except (FileNotFoundError, PermissionError, UnicodeDecodeError) as e:
                 print(f"Caught error {e}")
                 self.draw_error = True
@@ -126,13 +175,10 @@ class Parsing:
             # print(raw_data)
             count_start_hub = 0
             count_end_hub = 0
-            braces_open = 0
-            braces_close = 0
             for i in range(len(raw_data)):
                 count_start_hub += raw_data[i][0].count("start_hub:")
                 count_end_hub += raw_data[i][0].count("end_hub:")
                 if len(raw_data[i]) > 4:
-                    hub_option = ["color", "max_drones", "zone"]
                     raw_data[i][4:] = [",".join(raw_data[i][4:])]
             if count_start_hub != 1:
                 self.draw_error = True
@@ -140,8 +186,6 @@ class Parsing:
             if count_end_hub != 1:
                 self.draw_error = True
                 self.error_text = "Error on parsing number of end_hub not equal to 1"
-            # print(braces_open)
-            # print(braces_close)
 
         # create new data for data list
         if self.draw_error is False:
@@ -151,6 +195,8 @@ class Parsing:
                 self.add_connection(data, r_data)
             for hub in r_data[0]:
                 print(hub.name, hub.x, hub.y, hub.type_hub, hub.zone, hub.color, hub.max_drones)
+            for connection in r_data[1]:
+                print(connection.from_hub, connection.to_hub, connection.max_link_capacity)
             # print(len(r_data[0]))
             # # for hub in r_data[1]:
                 # print("from: ", hub.from_hub)
@@ -164,7 +210,9 @@ class Parsing:
             if self.error_popup.draw_error_popup(pr.get_screen_width(), pr.get_screen_height(), self.error_text):
                 self.draw_error = False
                 window.file_choose = ""
-                window.file_tree.path = "."
+                window.file_tree.path = os.path.dirname(window.file_tree.path)
+                if window.file_tree.path == "":
+                    window.file_tree.path = "."
                 window.file_tree.dirs = window.file_tree.get_dir(window.file_tree.path)
                 window.file_tree.files = window.file_tree.get_files(window.file_tree.path)
                 self.error_text = ""

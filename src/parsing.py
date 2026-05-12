@@ -198,7 +198,7 @@ class Parsing:
             for connection in r_data[1]:
                 print(connection.from_hub, connection.to_hub, connection.max_link_capacity)
             # print(len(r_data[0]))
-            # # for hub in r_data[1]:
+            # for hub in r_data[1]:
                 # print("from: ", hub.from_hub)
                 # print("to: ", hub.to_hub)
             print(r_data)

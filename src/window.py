@@ -1,3 +1,4 @@
+from hub import Hub
 import pyray as pr
 from gui.file_tree import FileTree
 from global_state import GlobalState
@@ -78,6 +79,16 @@ class Window():
             position = pr.Vector3(int(hub.x) * 5, 0.0, int(hub.y) * 5)
             pr.draw_cube(position, 2.0, 2.0, 2.0, pr.PURPLE)
             pr.draw_cube_wires(position, 2.0, 2.0, 2.0, pr.BLACK)
+        for connection in data[1]:
+            from_hub: Hub
+            to_hub: Hub
+            for hub in data[0]:
+                # print(connection.from_hub)
+                if connection.from_hub == hub.name:
+                    from_hub = hub
+                if connection.to_hub == hub.name:
+                    to_hub = hub
+            pr.draw_line_3d(pr.Vector3(int(from_hub.x) * 5, 0.0, int(from_hub.y) * 5), pr.Vector3(int(to_hub.x) * 5, 0.0, int(to_hub.y) * 5), pr.WHITE)
 
 
     def gui_scene_manager(self) -> None:
@@ -87,6 +98,7 @@ class Window():
             self.data = self.parsing.check_file(self.file_choose, self.glob_state, self)
         if (self.glob_state["Current"] == GlobalState.SIMULATION):
             pass
+        pr.draw_fps(10, 10)
 
     def frame_counter(self):
         self.current_frame += 1

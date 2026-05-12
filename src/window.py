@@ -74,8 +74,10 @@ class Window():
 
     def mode3d_scene_manager(self, data: list) -> None:
         self.cam.move_cam(self.dt)
-
-        pr.draw_cube(pr.Vector3(0.0, 0.0, 0.0), 2.0, 2.0, 2.0, pr.PURPLE)
+        for hub in data[0]:
+            position = pr.Vector3(int(hub.x) * 5, 0.0, int(hub.y) * 5)
+            pr.draw_cube(position, 2.0, 2.0, 2.0, pr.PURPLE)
+            pr.draw_cube_wires(position, 2.0, 2.0, 2.0, pr.BLACK)
 
 
     def gui_scene_manager(self) -> None:

@@ -8,7 +8,7 @@ class Cam():
     def __init__(self) -> None:
         self.cam: pr.Camera3D = pr.Camera3D()
         self.cam.fovy = 45
-        self.cam.position = pr.Vector3(0.0, 0.0, 0.0)
+        self.cam.position = pr.Vector3(0.0, 10.0, 20.0)
         self.cam.projection = pr.CameraProjection.CAMERA_PERSPECTIVE
         self.cam.target = pr.Vector3(0.0, 0.0, 0.0)       
         self.cam.up = pr.Vector3(0.0, 1.0, 0.0)
@@ -16,8 +16,21 @@ class Cam():
     def get_camera_3D(self) -> pr.Camera3D:
         return self.cam
 
-    def move_cam(self) -> None:
-        pass
+    def move_cam(self, dt: float) -> None:
+        speed = 10.0 * dt
+        if pr.is_key_down(pr.KeyboardKey.KEY_A):
+            self.cam.target.x += speed
+            self.cam.position.x += speed
+        if pr.is_key_down(pr.KeyboardKey.KEY_D):
+            self.cam.target.x -= speed
+            self.cam.position.x -= speed
+        if pr.is_key_down(pr.KeyboardKey.KEY_W):
+            self.cam.target.z += speed
+            self.cam.position.z += speed
+        if pr.is_key_down(pr.KeyboardKey.KEY_S):
+            self.cam.target.z -= speed
+            self.cam.position.z -= speed
+        pr.update_camera(self.cam, pr.CameraProjection.CAMERA_PERSPECTIVE)
 
 
 class Window():
@@ -37,6 +50,7 @@ class Window():
         self.scale: int = 1
         self.shader: pr.Shader
         self.data: list = [[], []]
+        self.dt: float
 
     def start_window(self) -> None:
         pr.set_config_flags(pr.ConfigFlags.FLAG_WINDOW_RESIZABLE)
@@ -58,8 +72,11 @@ class Window():
             if self.font_size < 16:
                 self.reverse_title = False
 
-    def mode3d_scene_manager(self) -> None:
-        pass
+    def mode3d_scene_manager(self, data: list) -> None:
+        self.cam.move_cam(self.dt)
+
+        pr.draw_cube(pr.Vector3(0.0, 0.0, 0.0), 2.0, 2.0, 2.0, pr.PURPLE)
+
 
     def gui_scene_manager(self) -> None:
         if (self.glob_state["Current"] == GlobalState.START):
@@ -82,6 +99,7 @@ class Window():
         pr.gui_load_style("assets/genesis.rgs")
         pr.gui_set_font(font)
         while not pr.window_should_close():
+            self.dt = pr.get_frame_time()
             self.width = pr.get_screen_width()
             self.height = pr.get_screen_height()
             pr.set_shader_value(self.shader, res_loc, pr.Vector2(self.width, self.height), pr.ShaderUniformDataType.SHADER_UNIFORM_VEC2)
@@ -93,7 +111,7 @@ class Window():
             pr.end_shader_mode()
             pr.begin_mode_3d(self.g_cam)
             if (self.glob_state["Current"] == GlobalState.SIMULATION):
-                self.mode3d_scene_manager()
+                self.mode3d_scene_manager(self.data)
             pr.end_mode_3d()
             self.gui_scene_manager()
             pr.end_drawing()

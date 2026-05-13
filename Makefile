@@ -5,6 +5,7 @@ run:
 	uv run src/main.py
 
 debug:
+	uv run python3 -m pdb src/main.py
 
 clean:
 	rm -fr __pycache__

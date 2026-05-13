@@ -3,6 +3,7 @@ import pyray as pr
 from gui.file_tree import FileTree
 from global_state import GlobalState
 from parsing import Parsing
+import os
 
 
 class Cam():
@@ -52,6 +53,8 @@ class Window():
         self.shader: pr.Shader
         self.data: list = [[], []]
         self.dt: float
+        self.change_map: bool = False
+        self.show_change_map: bool = False
 
     def start_window(self) -> None:
         pr.set_config_flags(pr.ConfigFlags.FLAG_WINDOW_RESIZABLE)
@@ -73,6 +76,18 @@ class Window():
             if self.font_size < 16:
                 self.reverse_title = False
 
+    def change_maps(self) -> None:
+        if self.change_map is True:
+            self.change_map = False
+        else:
+            self.file_choose = self.file_tree.select_map(self.width, self.height, self.glob_state)
+            try:
+                if os.path.isfile(self.file_choose):
+                    self.show_change_map = False
+            except Exception as e:
+                print(e)
+                print(type(self.file_choose))
+
     def mode3d_scene_manager(self, data: list) -> None:
         self.cam.move_cam(self.dt)
         for hub in data[0]:
@@ -90,14 +105,27 @@ class Window():
                     to_hub = hub
             pr.draw_line_3d(pr.Vector3(int(from_hub.x) * 5, 0.0, int(from_hub.y) * 5), pr.Vector3(int(to_hub.x) * 5, 0.0, int(to_hub.y) * 5), pr.WHITE)
 
-
     def gui_scene_manager(self) -> None:
         if (self.glob_state["Current"] == GlobalState.START):
             self.start_gui_scene()
-        if (self.glob_state["Current"] == GlobalState.PARSING):
+        elif (self.glob_state["Current"] == GlobalState.PARSING):
             self.data = self.parsing.check_file(self.file_choose, self.glob_state, self)
-        if (self.glob_state["Current"] == GlobalState.SIMULATION):
-            pass
+        elif (self.glob_state["Current"] == GlobalState.SIMULATION):
+            if pr.is_key_pressed(pr.KeyboardKey.KEY_F):
+                self.file_choose = ""
+                self.file_tree.path = "."
+                self.file_tree.dirs = self.file_tree.get_dir(self.file_tree.path)
+                self.file_tree.files = self.file_tree.get_files(self.file_tree.path)
+                if self.change_map is True:
+                    self.change_map = False
+                else:
+                    self.change_map = True
+                if self.show_change_map is False:
+                    self.show_change_map = True 
+                else:
+                    self.show_change_map = False
+            if self.show_change_map is True:
+                self.change_maps()
         pr.draw_fps(10, 10)
 
     def frame_counter(self):
@@ -133,4 +161,3 @@ class Window():
         pr.unload_shader(self.shader)
         pr.unload_font(font)
         pr.close_window()
-

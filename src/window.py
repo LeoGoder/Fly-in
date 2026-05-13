@@ -98,7 +98,6 @@ class Window():
             from_hub: Hub
             to_hub: Hub
             for hub in data[0]:
-                # print(connection.from_hub)
                 if connection.from_hub == hub.name:
                     from_hub = hub
                 if connection.to_hub == hub.name:

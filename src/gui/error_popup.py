@@ -14,4 +14,3 @@ class ErrorPopup():
         pr.gui_label(pr.Rectangle(error_rect.x + (len_text / 3), error_rect.y, len_text, error_rect.height), text)
         return 0
 
-

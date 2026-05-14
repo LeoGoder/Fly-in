@@ -34,6 +34,21 @@ class Parsing:
         if option_check not in all_options_connection:
             return False
         return True
+    
+    def check_zone_name(self, r_data: list):
+        buffer_name: list = []
+        for hub in r_data[0]:
+            if hub.name not in buffer_name:
+                buffer_name.append(hub.name)
+            elif hub.name in buffer_name:
+                self.draw_error = True
+                self.error_text = "Parsing error, duplicate name found"
+            if "-" in hub.name:
+                self.draw_error = True
+                self.error_text = "Parsing error, found '-' in hub name"
+            if " " in hub.name:
+                self.draw_error = True
+                self.error_text = "Parsing error, found space in hub name"
 
     def add_hub(self, data: list, temp_nb_drones: int, r_data: list) -> int:
         hub_option_parsed: dict = {
@@ -53,7 +68,7 @@ class Parsing:
             try:
                 for arg in args:
                     arg = arg.split("=")
-                    if self.check_options_hub(arg[0]) == False:
+                    if self.check_options_hub(arg[0]) is False:
                         self.draw_error = True
                         self.error_text = f"Error on hub option {arg[0]} in invalid"
                         break
@@ -95,7 +110,7 @@ class Parsing:
                 return 1
             r_data[0].append(hub_instance)
         if len(r_data[0]) > 0:
-            if self.check_zone_type(r_data[0][-1].zone) == False:
+            if self.check_zone_type(r_data[0][-1].zone) is False:
                 self.draw_error = True
                 self.error_text = f"Error on parsing invalid zone entered for {r_data[0][-1].name}"
                 return 1
@@ -195,7 +210,8 @@ class Parsing:
             # for connection in r_data[1]:
             #     print(connection.from_hub, connection.to_hub, connection.max_link_capacity)
             # print(r_data)
-
+        if self.draw_error is False:
+            self.check_zone_name(r_data)
         if self.draw_error is False:
             global_state["Current"] = GlobalState.SIMULATION
 

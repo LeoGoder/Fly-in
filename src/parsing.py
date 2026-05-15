@@ -49,6 +49,20 @@ class Parsing:
             if " " in hub.name:
                 self.draw_error = True
                 self.error_text = "Parsing error, found space in hub name"
+        for connection in r_data[1]:
+            if connection.from_hub not in buffer_name:
+                self.draw_error = True
+                self.error_text = f"Parsing error, name: {connection.from_hub}:\ndon't exist in hub name"
+
+    def check_capacity_positive(self, r_data: list) -> None:
+        for hub in r_data[0]:
+            if int(hub.max_drones) < 0:
+                self.draw_error = True
+                self.error_text = f"Parsing error, max_drones can't be negative: {hub.max_drones} found"
+        for connection in r_data[1]:
+            if int(connection.max_link_capacity) < 0:
+                self.draw_error = True
+                self.error_text = f"Parsing error, max_link_capacity can't be negative: {connection.max_link_capacity} found"
 
     def add_hub(self, data: list, temp_nb_drones: int, r_data: list) -> int:
         hub_option_parsed: dict = {
@@ -128,7 +142,7 @@ class Parsing:
                 option = option.replace('[', '').replace(']', '')
                 try:
                     option = option.split("=")
-                    if self.check_options_connection(option[0]) == False:
+                    if self.check_options_connection(option[0]) is False:
                         self.draw_error = True
                         self.error_text = f"Error on connection option {option[0]} is invalid"
                     if option:
@@ -181,6 +195,10 @@ class Parsing:
                 print(f"Caught error {e}")
                 self.draw_error = True
                 self.error_text = str(e)
+            print(temp_nb_drones)
+            if temp_nb_drones.isdigit() is False:
+                self.draw_error = True
+                self.error_text = "Caught error, nb_drones is not a number or is negatives"
 
         # check number of start and end hub
         if self.draw_error is False:
@@ -212,6 +230,8 @@ class Parsing:
             # print(r_data)
         if self.draw_error is False:
             self.check_zone_name(r_data)
+        if self.draw_error is False:
+            self.check_capacity_positive(r_data)
         if self.draw_error is False:
             global_state["Current"] = GlobalState.SIMULATION
 

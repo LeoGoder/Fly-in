@@ -1,3 +1,2 @@
 class Dijkstra:
     pass
-

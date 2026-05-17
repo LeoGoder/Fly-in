@@ -178,7 +178,7 @@ class Parsing:
                             continue
                         if self.is_comments(line_split) and line_split != []:
                             raw_data.append(line_split)
-               
+
             except (FileNotFoundError, PermissionError, UnicodeDecodeError) as e:
                 print(f"Caught error {e}")
                 self.draw_error = True
@@ -247,4 +247,3 @@ class Parsing:
                 self.error_text = ""
                 global_state["Current"] = GlobalState.START
         return r_data
-

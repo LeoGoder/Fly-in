@@ -66,4 +66,3 @@ class FileTree():
                 print("Can't go more back")
                 self.path = "."
         return self.path
-

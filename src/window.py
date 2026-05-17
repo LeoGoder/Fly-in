@@ -1,7 +1,8 @@
 import os
 
 import pyray as pr
-
+import random
+from color import Color
 from global_state import GlobalState
 from gui.file_tree import FileTree
 from hub import Hub
@@ -34,6 +35,10 @@ class Cam:
         if pr.is_key_down(pr.KeyboardKey.KEY_S):
             self.cam.target.z += speed
             self.cam.position.z += speed
+        if pr.get_mouse_wheel_move() != 0:
+            mouse_wheel_movement = pr.get_mouse_wheel_move()
+            self.cam.position.y += mouse_wheel_movement * speed * 10
+            self.cam.target.y += mouse_wheel_movement * speed * 10
         pr.update_camera(self.cam, pr.CameraProjection.CAMERA_PERSPECTIVE)
 
 
@@ -57,7 +62,10 @@ class Window:
         self.dt: float
         self.change_map: bool = False
         self.show_change_map: bool = False
+        self.color: Color
         self.spaceship_model: pr.Model
+        self.planet_model: dict = {}
+        self.planet_rotation: float = 0.0
 
     def start_window(self) -> None:
         pr.set_config_flags(pr.ConfigFlags.FLAG_WINDOW_RESIZABLE)
@@ -108,8 +116,26 @@ class Window:
         self.cam.move_cam(self.dt)
         for hub in data[0]:
             position = pr.Vector3(int(hub.x) * 5, 0.0, int(hub.y) * 5)
-            pr.draw_model(self.spaceship_model, position, 1.0, pr.WHITE)
-            # pr.draw_cube_wires(position, 1.5, 1.5, 1.5, pr.BLACK)
+            match hub.color:
+                case "green":
+                    pr.draw_model_ex(self.planet_model["green"], position, pr.Vector3(0, 1, 0), self.planet_rotation, pr.Vector3(1.5, 1.5, 1.5), pr.WHITE)
+                case "blue":
+                    pr.draw_model_ex(self.planet_model["blue"], position, pr.Vector3(0, 1, 0), self.planet_rotation, pr.Vector3(1.5, 1.5, 1.5), pr.WHITE)
+                case "red":
+                    pr.draw_model_ex(self.planet_model["red"], position, pr.Vector3(0, 1, 0), self.planet_rotation, pr.Vector3(1.5, 1.5, 1.5), pr.WHITE)
+                case "orange":
+                    pr.draw_model_ex(self.planet_model["orange"], position, pr.Vector3(0, 1, 0), self.planet_rotation, pr.Vector3(1.5, 1.5, 1.5), pr.WHITE)
+                case "purple":
+                    pr.draw_model_ex(self.planet_model["purple"], position, pr.Vector3(0, 1, 0), self.planet_rotation, pr.Vector3(1.5, 1.5, 1.5), pr.WHITE)
+                case "gold":
+                    pr.draw_model_ex(self.planet_model["gold"], position, pr.Vector3(0, 1, 0), self.planet_rotation, pr.Vector3(1.5, 1.5, 1.5), pr.WHITE)
+                case "cyan":
+                    pr.draw_model_ex(self.planet_model["cyan"], position, pr.Vector3(0, 1, 0), self.planet_rotation, pr.Vector3(1.5, 1.5, 1.5), pr.WHITE)
+                case "rainbow":
+                    pr.draw_cube(position, 1.0, 1.0, 1.0, random.choice(list(Color)).value)
+        self.planet_rotation += 0.3
+        if self.planet_rotation > 360:
+            self.planet_rotation = 0
         for connection in data[1]:
             from_hub: Hub
             to_hub: Hub
@@ -152,6 +178,14 @@ class Window:
         if self.current_frame > self.max_fps:
             self.current_frame = 0
 
+    def load_planet_model(self) -> None:
+        self.planet_model["green"] = pr.load_model("assets/planet_green.gltf")
+        self.planet_model["red"] = pr.load_model("assets/planet_red.gltf")
+        self.planet_model["blue"] = pr.load_model("assets/planet_blue.gltf")
+        self.planet_model["orange"] = pr.load_model("assets/planet_orange.gltf")
+        self.planet_model["purple"] = pr.load_model("assets/planet_purple.gltf")
+        self.planet_model["gold"] = pr.load_model("assets/planet_gold.gltf")
+        self.planet_model["cyan"] = pr.load_model("assets/planet_cyan.gltf")
     def main_loop(self) -> None:
         pr.set_target_fps(self.max_fps)
         res_loc = pr.get_shader_location(self.shader, "resolution")
@@ -159,6 +193,7 @@ class Window:
         font = pr.load_font("assets/PixelOperator.ttf")
         pr.gui_load_style("assets/genesis.rgs")
         self.spaceship_model = pr.load_model("assets/spaceship.gltf")
+        self.load_planet_model()
         pr.gui_set_font(font)
         while not pr.window_should_close():
             self.dt = pr.get_frame_time()

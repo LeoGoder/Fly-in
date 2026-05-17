@@ -15,6 +15,7 @@ void	main() {
 	vec3 color = vec3(0.02, 0.02, 0.05);
 	vec2 uv = gl_FragCoord.xy / resolution.xy;
 	// vec3 color2 = vec3(0.02, abs(sin(time)), 1.00);
+	
 	float speed = 35.0;
 
 	// Nebuleuse 1
@@ -30,7 +31,7 @@ void	main() {
     color += nebula1 + nebula2;
 	vec2 offset = vec2(0.0, time * speed);
 	vec2 grid = floor((gl_FragCoord.xy + offset) * 0.5);
-	if (hash(grid)> 0.995) {
+	if (hash(grid)> 0.997) {
 		float sparkle = 1.0;
 		// color.r += 0.1;
 		// color.g = abs(sin(time));
@@ -39,4 +40,3 @@ void	main() {
 	}
 	final_color = vec4(color, 1.0);
 }
-

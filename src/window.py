@@ -23,6 +23,8 @@ class Cam:
 
     def move_cam(self, dt: float) -> None:
         speed = 10.0 * dt
+        if pr.is_key_down(pr.KeyboardKey.KEY_LEFT_SHIFT):
+            speed = 30.0 * dt
         if pr.is_key_down(pr.KeyboardKey.KEY_A):
             self.cam.target.x -= speed
             self.cam.position.x -= speed

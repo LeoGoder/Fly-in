@@ -1,7 +1,8 @@
 import os
+import random
 
 import pyray as pr
-import random
+
 from color import Color
 from global_state import GlobalState
 from gui.file_tree import FileTree
@@ -39,8 +40,8 @@ class Cam:
             self.cam.position.z += speed
         if pr.get_mouse_wheel_move() != 0:
             mouse_wheel_movement = pr.get_mouse_wheel_move()
-            self.cam.position.y += mouse_wheel_movement * speed * 10
-            self.cam.target.y += mouse_wheel_movement * speed * 10
+            self.cam.position.y += -mouse_wheel_movement * speed * 10
+            self.cam.target.y += -mouse_wheel_movement * speed * 10
         pr.update_camera(self.cam, pr.CameraProjection.CAMERA_PERSPECTIVE)
 
 
@@ -120,21 +121,72 @@ class Window:
             position = pr.Vector3(int(hub.x) * 5, 0.0, int(hub.y) * 5)
             match hub.color:
                 case "green":
-                    pr.draw_model_ex(self.planet_model["green"], position, pr.Vector3(0, 1, 0), self.planet_rotation, pr.Vector3(1.5, 1.5, 1.5), pr.WHITE)
+                    pr.draw_model_ex(
+                        self.planet_model["green"],
+                        position,
+                        pr.Vector3(0, 1, 0),
+                        self.planet_rotation,
+                        pr.Vector3(1.5, 1.5, 1.5),
+                        pr.WHITE,
+                    )
                 case "blue":
-                    pr.draw_model_ex(self.planet_model["blue"], position, pr.Vector3(0, 1, 0), self.planet_rotation, pr.Vector3(1.5, 1.5, 1.5), pr.WHITE)
+                    pr.draw_model_ex(
+                        self.planet_model["blue"],
+                        position,
+                        pr.Vector3(0, 1, 0),
+                        self.planet_rotation,
+                        pr.Vector3(1.5, 1.5, 1.5),
+                        pr.WHITE,
+                    )
                 case "red":
-                    pr.draw_model_ex(self.planet_model["red"], position, pr.Vector3(0, 1, 0), self.planet_rotation, pr.Vector3(1.5, 1.5, 1.5), pr.WHITE)
+                    pr.draw_model_ex(
+                        self.planet_model["red"],
+                        position,
+                        pr.Vector3(0, 1, 0),
+                        self.planet_rotation,
+                        pr.Vector3(1.5, 1.5, 1.5),
+                        pr.WHITE,
+                    )
                 case "orange":
-                    pr.draw_model_ex(self.planet_model["orange"], position, pr.Vector3(0, 1, 0), self.planet_rotation, pr.Vector3(1.5, 1.5, 1.5), pr.WHITE)
+                    pr.draw_model_ex(
+                        self.planet_model["orange"],
+                        position,
+                        pr.Vector3(0, 1, 0),
+                        self.planet_rotation,
+                        pr.Vector3(1.5, 1.5, 1.5),
+                        pr.WHITE,
+                    )
                 case "purple":
-                    pr.draw_model_ex(self.planet_model["purple"], position, pr.Vector3(0, 1, 0), self.planet_rotation, pr.Vector3(1.5, 1.5, 1.5), pr.WHITE)
+                    pr.draw_model_ex(
+                        self.planet_model["purple"],
+                        position,
+                        pr.Vector3(0, 1, 0),
+                        self.planet_rotation,
+                        pr.Vector3(1.5, 1.5, 1.5),
+                        pr.WHITE,
+                    )
                 case "gold":
-                    pr.draw_model_ex(self.planet_model["gold"], position, pr.Vector3(0, 1, 0), self.planet_rotation, pr.Vector3(1.5, 1.5, 1.5), pr.WHITE)
+                    pr.draw_model_ex(
+                        self.planet_model["gold"],
+                        position,
+                        pr.Vector3(0, 1, 0),
+                        self.planet_rotation,
+                        pr.Vector3(1.5, 1.5, 1.5),
+                        pr.WHITE,
+                    )
                 case "cyan":
-                    pr.draw_model_ex(self.planet_model["cyan"], position, pr.Vector3(0, 1, 0), self.planet_rotation, pr.Vector3(1.5, 1.5, 1.5), pr.WHITE)
+                    pr.draw_model_ex(
+                        self.planet_model["cyan"],
+                        position,
+                        pr.Vector3(0, 1, 0),
+                        self.planet_rotation,
+                        pr.Vector3(1.5, 1.5, 1.5),
+                        pr.WHITE,
+                    )
                 case "rainbow":
-                    pr.draw_cube(position, 1.0, 1.0, 1.0, random.choice(list(Color)).value)
+                    pr.draw_cube(
+                        position, 1.0, 1.0, 1.0, random.choice(list(Color)).value
+                    )
         self.planet_rotation += 0.3
         if self.planet_rotation > 360:
             self.planet_rotation = 0
@@ -188,6 +240,7 @@ class Window:
         self.planet_model["purple"] = pr.load_model("assets/planet_purple.gltf")
         self.planet_model["gold"] = pr.load_model("assets/planet_gold.gltf")
         self.planet_model["cyan"] = pr.load_model("assets/planet_cyan.gltf")
+
     def main_loop(self) -> None:
         pr.set_target_fps(self.max_fps)
         res_loc = pr.get_shader_location(self.shader, "resolution")

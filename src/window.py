@@ -8,6 +8,7 @@ from global_state import GlobalState
 from gui.file_tree import FileTree
 from hub import Hub
 from parsing import Parsing
+from algo.dijkstra import Dijkstra
 
 
 class Cam:
@@ -69,6 +70,7 @@ class Window:
         self.spaceship_model: pr.Model
         self.planet_model: dict = {}
         self.planet_rotation: float = 0.0
+        self.dijkstra: Dijkstra
 
     def start_window(self) -> None:
         pr.set_config_flags(pr.ConfigFlags.FLAG_WINDOW_RESIZABLE)
@@ -191,18 +193,19 @@ class Window:
         if self.planet_rotation > 360:
             self.planet_rotation = 0
         for connection in data[1]:
-            from_hub: Hub
-            to_hub: Hub
+            from_hub: Hub | None = None
+            to_hub: Hub | None = None
             for hub in data[0]:
                 if connection.from_hub == hub.name:
                     from_hub = hub
                 if connection.to_hub == hub.name:
                     to_hub = hub
-            pr.draw_line_3d(
-                pr.Vector3(int(from_hub.x) * 5, 0.0, int(from_hub.y) * 5),
-                pr.Vector3(int(to_hub.x) * 5, 0.0, int(to_hub.y) * 5),
-                pr.WHITE,
-            )
+            if from_hub is not None and to_hub is not None:
+                pr.draw_line_3d(
+                    pr.Vector3(int(from_hub.x) * 5, 0.0, int(from_hub.y) * 5),
+                    pr.Vector3(int(to_hub.x) * 5, 0.0, int(to_hub.y) * 5),
+                    pr.WHITE,
+                )
 
     def gui_scene_manager(self) -> None:
         if self.glob_state["Current"] == GlobalState.START:
@@ -271,6 +274,9 @@ class Window:
             pr.begin_shader_mode(self.shader)
             pr.draw_rectangle(0, 0, self.width, self.height, pr.WHITE)
             pr.end_shader_mode()
+            if self.glob_state["Current"] == GlobalState.FIND:
+                self.dijkstra = Dijkstra(self.data)
+                self.dijkstra.main_loop(self.glob_state)
             pr.begin_mode_3d(self.g_cam)
             if self.glob_state["Current"] == GlobalState.SIMULATION:
                 self.mode3d_scene_manager(self.data)

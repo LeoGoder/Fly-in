@@ -196,9 +196,10 @@ class Parsing:
                 self.draw_error = True
                 self.error_text = str(e)
             print(temp_nb_drones)
-            if temp_nb_drones.isdigit() is False:
-                self.draw_error = True
-                self.error_text = "Caught error, nb_drones is not a number or is negatives"
+            if type(temp_nb_drones) is not int:
+                if temp_nb_drones.isdigit() is False:
+                    self.draw_error = True
+                    self.error_text = "Caught error, nb_drones is not a number or is negatives"
 
         # check number of start and end hub
         if self.draw_error is False:
@@ -233,7 +234,7 @@ class Parsing:
         if self.draw_error is False:
             self.check_capacity_positive(r_data)
         if self.draw_error is False:
-            global_state["Current"] = GlobalState.SIMULATION
+            global_state["Current"] = GlobalState.FIND
 
         else:
             if self.error_popup.draw_error_popup(pr.get_screen_width(), pr.get_screen_height(), self.error_text):

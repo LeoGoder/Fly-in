@@ -165,10 +165,16 @@ class Parsing:
             r_data[1].append(connection_instance)
         return 0
 
+    def get_file_name(self, r_data: list, path: str) -> None:
+        path_split = path.split('/')
+        r_data[2] = path_split[-1]
+
     def check_file(self, path: str, global_state: dict, window: 'Window') -> list:
-        r_data: list = [[], []]
+        r_data: list = [[], [], []]
         raw_data: list = []
         temp_nb_drones: int = 0
+        self.get_file_name(r_data, path)
+        print(r_data[2])
         if self.draw_error is False:
             try:
                 with open(path, 'r') as f:

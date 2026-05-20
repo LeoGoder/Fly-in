@@ -38,3 +38,4 @@ class BellmanFord:
                 for conn in self.hub_connection:
                     pass
         global_state["Current"] = GlobalState.SIMULATION
+

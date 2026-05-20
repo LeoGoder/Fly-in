@@ -234,6 +234,8 @@ class Window:
                     self.show_change_map = False
             if self.show_change_map is True:
                 self.change_maps()
+            len_map_text = pr.measure_text(self.data[2], 64)
+            pr.draw_text(f"Map: {self.data[2]}", int(self.width / 2 - (len_map_text / 2)), 20, 64, pr.RAYWHITE)
         pr.draw_fps(10, 10)
 
     def frame_counter(self):

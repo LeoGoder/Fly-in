@@ -1,6 +1,7 @@
 from hub import Hub
 from global_state import GlobalState
 
+
 class Dijkstra:
 
     def __init__(self, data: list) -> None:
@@ -33,7 +34,8 @@ class Dijkstra:
 
     def main_loop(self, global_state: dict) -> None:
         print(f"len hub to visit {len(self.hub_to_visit)}")
-        while self.hub_to_visit != [] and self.hub_to_visit[0].type_hub != "end_hub":
+        while (self.hub_to_visit != [] and
+               self.hub_to_visit[0].type_hub != "end_hub"):
             connection = self.get_connection(self.hub_to_visit[0].name)
             print(f"connection for {self.hub_to_visit[0].name}: {connection}")
 

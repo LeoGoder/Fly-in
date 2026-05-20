@@ -1,6 +1,7 @@
 from hub import Hub
 from global_state import GlobalState
 
+
 class BellmanFord:
     def __init__(self, data: list) -> None:
         self.new_data: list = data.copy()
@@ -38,4 +39,3 @@ class BellmanFord:
                 for conn in self.hub_connection:
                     pass
         global_state["Current"] = GlobalState.SIMULATION
-

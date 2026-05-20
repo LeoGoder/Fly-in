@@ -8,10 +8,7 @@ out vec4 final_color;
 
 // random function
 float	hash(vec2 p) {
-	
-	float new_time = time;
-	new_time = new_time - float(int((new_time / 10000))) * 10000;
-	return fract(gl_FragCoord.x * 0.72 * new_time + 0.072 * gl_FragCoord.y * new_time ) ;
+	return fract(sin(dot(p.xy ,vec2(12.9898,78.233))) * 43758.5453);
 }
 
 // main
@@ -35,7 +32,7 @@ void	main() {
     color += nebula1 + nebula2;
 	vec2 offset = vec2(0.0, time * speed);
 	vec2 grid = floor((gl_FragCoord.xy + offset) * 0.5);
-	if (hash(grid) == 0.0) {
+	if (hash(grid) > 0.999) {
 		float sparkle = 1.0;
 		// color.r += 0.1;
 		// color.g = abs(sin(time));

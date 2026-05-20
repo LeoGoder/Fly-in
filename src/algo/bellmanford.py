@@ -32,5 +32,9 @@ class BellmanFord:
     def main_loop(self, global_state: dict) -> None:
         costs = {hub.name: float('inf') for hub in self.all_hubs}
         print(costs)
-        print("BELLLLLL")
+        nb_drones: int = self.all_hubs[0].nb_drones
+        for i in range(nb_drones):
+            for _ in range(len(self.all_hubs) - 1):
+                for conn in self.hub_connection:
+                    pass
         global_state["Current"] = GlobalState.SIMULATION

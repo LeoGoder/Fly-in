@@ -1,6 +1,5 @@
 import os
 import random
-
 import pyray as pr
 
 from color import Color
@@ -9,6 +8,8 @@ from gui.file_tree import FileTree
 from hub import Hub
 from parsing import Parsing
 from algo.dijkstra import Dijkstra
+from algo.bellmanford import BellmanFord
+from gui.algo_choice import AlgoChoice
 
 
 class Cam:
@@ -71,6 +72,9 @@ class Window:
         self.planet_model: dict = {}
         self.planet_rotation: float = 0.0
         self.dijkstra: Dijkstra
+        self.bellman: BellmanFord
+        self.choice: str
+        self.draw_choice: AlgoChoice = AlgoChoice()
 
     def start_window(self) -> None:
         pr.set_config_flags(pr.ConfigFlags.FLAG_WINDOW_RESIZABLE)
@@ -93,6 +97,7 @@ class Window:
         self.file_choose = self.file_tree.select_map(
             self.width, self.height, self.glob_state
         )
+        self.choice = self.draw_choice.draw_choice_window(self.width, self.height)
         if self.current_frame % 2 == 0:
             if self.reverse_title is False:
                 self.font_size += 1
@@ -116,6 +121,7 @@ class Window:
             except Exception as e:
                 print(e)
                 print(type(self.file_choose))
+            self.choice = self.draw_choice.draw_choice_window(self.width, self.height)
 
     def mode3d_scene_manager(self, data: list) -> None:
         self.cam.move_cam(self.dt)
@@ -275,8 +281,14 @@ class Window:
             pr.draw_rectangle(0, 0, self.width, self.height, pr.WHITE)
             pr.end_shader_mode()
             if self.glob_state["Current"] == GlobalState.FIND:
-                self.dijkstra = Dijkstra(self.data)
-                self.dijkstra.main_loop(self.glob_state)
+                if self.choice == "bellman":
+                    self.bellman = BellmanFord(self.data)
+                    self.bellman.main_loop(self.glob_state)
+                if self.choice == "dijkstra":
+                    self.dijkstra = Dijkstra(self.data)
+                    self.dijkstra.main_loop(self.glob_state)
+                if self.choice == "astar":
+                    pass
             pr.begin_mode_3d(self.g_cam)
             if self.glob_state["Current"] == GlobalState.SIMULATION:
                 self.mode3d_scene_manager(self.data)

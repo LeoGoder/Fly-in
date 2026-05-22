@@ -235,6 +235,9 @@ class Window:
             if self.show_change_map is True:
                 self.change_maps()
             len_map_text = pr.measure_text(self.data[2], 64)
+            len_map_text_prefix = pr.measure_text(f"Map: {self.data[2]}", 64)
+            map_rect = pr.Rectangle(int(self.width / 2 - (len_map_text / 2)), 20, len_map_text_prefix + 20, 64)
+            pr.draw_rectangle(int(map_rect.x - 10), int(map_rect.y), int(map_rect.width), int(map_rect.height), pr.Color(0, 0, 0, 120))
             pr.draw_text(f"Map: {self.data[2]}", int(self.width / 2 - (len_map_text / 2)), 20, 64, pr.RAYWHITE)
         pr.draw_fps(10, 10)
 

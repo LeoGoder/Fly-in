@@ -213,6 +213,9 @@ class Window:
                     pr.WHITE,
                 )
 
+    def draw_drones(self, path: str) -> None:
+        pass
+
     def gui_scene_manager(self) -> None:
         if self.glob_state["Current"] == GlobalState.START:
             self.start_gui_scene()

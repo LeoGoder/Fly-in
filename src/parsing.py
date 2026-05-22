@@ -246,8 +246,8 @@ class Parsing:
             self.check_zone_name(r_data)
         if self.draw_error is False:
             self.check_capacity_positive(r_data)
-        if self.draw_error is False:
-            self.check_color(r_data)
+        # if self.draw_error is False:
+        #     self.check_color(r_data)
         if self.draw_error is False:
             global_state["Current"] = GlobalState.FIND
 

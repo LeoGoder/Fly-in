@@ -169,6 +169,13 @@ class Parsing:
         path_split = path.split('/')
         r_data[2] = path_split[-1]
 
+    def check_color(self, r_data: list) ->  None:
+        lst_color: list = ["red", "blue", "green", "cyan", "gold", "rainbow", "brown", "purple", "orange", "black", "darkred", "crimson"]
+        for hub in r_data[0]:
+            if hub.color not in lst_color:
+                self.draw_error = True
+                self.error_text = f"following color '{hub.color}' doesn't exist"
+
     def check_file(self, path: str, global_state: dict, window: 'Window') -> list:
         r_data: list = [[], [], []]
         raw_data: list = []
@@ -239,6 +246,8 @@ class Parsing:
             self.check_zone_name(r_data)
         if self.draw_error is False:
             self.check_capacity_positive(r_data)
+        if self.draw_error is False:
+            self.check_color(r_data)
         if self.draw_error is False:
             global_state["Current"] = GlobalState.FIND
 

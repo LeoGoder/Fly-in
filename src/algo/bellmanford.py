@@ -1,5 +1,4 @@
 from importlib.resources import path
-
 from global_state import GlobalState
 
 
@@ -40,6 +39,7 @@ class BellmanFord:
         end_name = self.all_hubs[-1].name
         nb_drones: int = self.all_hubs[0].nb_drones
         path: list = [[] for _ in range(nb_drones)]
+        timed_path: list = [[] for _ in range(nb_drones)]
         reservation: dict = {}
         for i in range(nb_drones):
             costs = {hub.name: float('inf') for hub in self.all_hubs}
@@ -54,10 +54,20 @@ class BellmanFord:
                             continue
                         estimation_turn = costs[actual_hub] + self.find_cost_hub(neighbour_hub)
                         futur_drones_neighbour = reservation.get((neighbour_hub, estimation_turn), 0)
-                        max_capacity = self.hubs_dict[neighbour_hub].max_drones 
+                        max_capacity = self.hubs_dict[neighbour_hub].max_drones
+                        waiting_turn = 0
                         if int(futur_drones_neighbour) >= int(max_capacity):
-                            continue
-                        new_cost = costs[actual_hub] + self.find_cost_hub(neighbour_hub)
+                            waiting_turn = 0
+                            max_waiting_turn = 10
+                            while waiting_turn < max_waiting_turn:
+                                waiting_turn += 1
+                                estimation_turn = costs[actual_hub] + self.find_cost_hub(neighbour_hub) + waiting_turn
+                                futur_drones_neighbour = reservation.get((neighbour_hub, estimation_turn), 0)
+                                if int(futur_drones_neighbour) < int(max_capacity):
+                                    break
+                            if waiting_turn == max_waiting_turn:
+                                continue
+                        new_cost = costs[actual_hub] + self.find_cost_hub(neighbour_hub) + waiting_turn
                         if new_cost < costs[neighbour_hub]:
                             costs[neighbour_hub] = new_cost
                             parents[neighbour_hub] = actual_hub
@@ -68,11 +78,23 @@ class BellmanFord:
                     path[i].append(current)
                     current = parents[current]
                 path[i].reverse()
+            if path[i]:
+                if path[i]:
+                    for j, hub in enumerate(path[i]):
+                        timed_path[i].append(hub)                        
+                        if j < len(path[i]) - 1:
+                            next_hub = path[i][j + 1]
+                            travel_cost = self.find_cost_hub(next_hub)
+                            wait = costs[next_hub] - costs[hub] - travel_cost
+                            for _ in range(int(wait)):
+                                timed_path[i].append(hub)
             # Update reservation
             for hub in path[i]:
-                turn = costs[hub] 
+                turn = int(costs[hub])
                 reservation[(hub, turn)] = reservation.get((hub, turn), 0) + 1
         global_state["Current"] = GlobalState.SIMULATION
         print(path)
         print(reservation)
-        return path
+        print(costs)
+        print(timed_path)
+        return timed_path

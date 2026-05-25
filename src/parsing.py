@@ -237,8 +237,8 @@ class Parsing:
                 # print(data)
                 self.add_hub(data, temp_nb_drones, r_data)
                 self.add_connection(data, r_data)
-            # for hub in r_data[0]:
-            #     print(hub.name, hub.x, hub.y, hub.type_hub, hub.zone, hub.color, hub.max_drones)
+            for hub in r_data[0]:
+                print(hub.name, hub.x, hub.y, hub.type_hub, hub.zone, hub.color, hub.max_drones)
             # for connection in r_data[1]:
             #     print(connection.from_hub, connection.to_hub, connection.max_link_capacity)
             # print(r_data)

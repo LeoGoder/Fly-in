@@ -1,3 +1,4 @@
+# Theme: nb_drones must be an integer
 nb_drones: HELLO
 
 start_hub: start 0 0 [color=green]

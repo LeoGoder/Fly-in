@@ -1,3 +1,4 @@
+# Theme: invalid data appears after closing brackets
 nb_drones: 3
 
 start_hub: start 0 0 [color=green]

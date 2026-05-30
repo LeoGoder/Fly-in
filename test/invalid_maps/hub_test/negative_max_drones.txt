@@ -1,4 +1,4 @@
-# Easy Level 1: Simple linear path
+# Theme: hub max_drones cannot be negative
 
 nb_drones: 2
 

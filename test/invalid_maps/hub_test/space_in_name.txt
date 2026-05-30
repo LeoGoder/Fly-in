@@ -1,4 +1,4 @@
-# Easy Level 1: Simple linear path
+# Theme: hub names cannot contain spaces
 
 nb_drones: 2
 

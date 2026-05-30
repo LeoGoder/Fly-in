@@ -7,7 +7,6 @@ from global_state import GlobalState
 from gui.file_tree import FileTree
 from hub import Hub
 from parsing import Parsing
-from algo.dijkstra import Dijkstra
 from algo.bellmanford import BellmanFord
 from gui.algo_choice import AlgoChoice
 
@@ -71,7 +70,6 @@ class Window:
         self.spaceship_model: pr.Model
         self.planet_model: dict = {}
         self.planet_rotation: float = 0.0
-        self.dijkstra: Dijkstra
         self.bellman: BellmanFord
         self.choice: str
         self.draw_choice: AlgoChoice = AlgoChoice()
@@ -119,6 +117,7 @@ class Window:
             try:
                 if os.path.isfile(self.file_choose):
                     self.show_change_map = False
+                    self.drones_index = 0
             except Exception as e:
                 print(e)
                 print(type(self.file_choose))
@@ -323,8 +322,7 @@ class Window:
                     self.bellman = BellmanFord(self.data)
                     drones_path = self.bellman.main_loop(self.glob_state)
                 if self.choice == "dijkstra":
-                    self.dijkstra = Dijkstra(self.data)
-                    self.dijkstra.main_loop(self.glob_state)
+                    pass
                 if self.choice == "astar":
                     pass
             pr.begin_mode_3d(self.g_cam)

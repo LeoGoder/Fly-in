@@ -1,3 +1,4 @@
+# Theme: duplicate start_hub definitions are invalid
 
 nb_drones: 2
 

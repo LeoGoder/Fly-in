@@ -1,4 +1,4 @@
-# Easy Level 1: Simple linear path
+# Theme: hub options must be enclosed in brackets
 
 nb_drones: 2
 

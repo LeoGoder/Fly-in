@@ -1,4 +1,4 @@
-# Easy Level 1: Simple linear path
+# Theme: empty bracketed options are invalid
 
 nb_drones: 2
 

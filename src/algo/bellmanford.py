@@ -1,4 +1,3 @@
-from importlib.resources import path
 from global_state import GlobalState
 
 
@@ -33,6 +32,10 @@ class BellmanFord:
             if hub_name in connection.to_hub:
                 r_lst.append(connection.from_hub)
         return r_lst
+
+    def fill_path(self, path: list) -> list:
+
+        return path
 
     def main_loop(self, global_state: dict) -> list:
         start_name = self.all_hubs[0].name

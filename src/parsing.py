@@ -169,6 +169,14 @@ class Parsing:
         path_split = path.split('/')
         r_data[2] = path_split[-1]
 
+    def check_max_drones_number(self, r_data: list) -> None:
+        try:
+            for hub in r_data[0]:
+                int(hub.max_drones)
+        except ValueError as e:
+            self.draw_error = True
+            self.error_text = f"{e}"
+
     def check_color(self, r_data: list) ->  None:
         lst_color: list = ["red", "blue", "green", "cyan", "gold", "rainbow", "brown", "purple", "orange", "black", "darkred", "crimson", "yellow"]
         for hub in r_data[0]:
@@ -244,6 +252,8 @@ class Parsing:
             # print(r_data)
         if self.draw_error is False:
             self.check_zone_name(r_data)
+        if self.draw_error is False:
+            self.check_max_drones_number(r_data)
         if self.draw_error is False:
             self.check_capacity_positive(r_data)
         # if self.draw_error is False:

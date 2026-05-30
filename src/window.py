@@ -8,7 +8,6 @@ from gui.file_tree import FileTree
 from hub import Hub
 from parsing import Parsing
 from algo.bellmanford import BellmanFord
-from gui.algo_choice import AlgoChoice
 
 
 class Cam:
@@ -72,7 +71,6 @@ class Window:
         self.planet_rotation: float = 0.0
         self.bellman: BellmanFord
         self.choice: str
-        self.draw_choice: AlgoChoice = AlgoChoice()
         self.drones_index: int = 0
         self.drones_index_max: int = 0
 
@@ -97,7 +95,6 @@ class Window:
         self.file_choose = self.file_tree.select_map(
             self.width, self.height, self.glob_state
         )
-        self.choice = self.draw_choice.draw_choice_window(self.width, self.height)
         if self.current_frame % 2 == 0:
             if self.reverse_title is False:
                 self.font_size += 1
@@ -122,7 +119,6 @@ class Window:
             except Exception as e:
                 print(e)
                 print(type(self.file_choose))
-            self.choice = self.draw_choice.draw_choice_window(self.width, self.height)
 
     def mode3d_scene_manager(self, data: list) -> None:
         self.cam.move_cam(self.dt)
@@ -337,13 +333,8 @@ class Window:
             pr.draw_rectangle(0, 0, self.width, self.height, pr.WHITE)
             pr.end_shader_mode()
             if self.glob_state["Current"] == GlobalState.FIND:
-                if self.choice == "bellman":
-                    self.bellman = BellmanFord(self.data)
-                    drones_path = self.bellman.main_loop(self.glob_state)
-                if self.choice == "dijkstra":
-                    pass
-                if self.choice == "astar":
-                    pass
+                self.bellman = BellmanFord(self.data)
+                drones_path = self.bellman.main_loop(self.glob_state)
                 self.drones_index_max = len(drones_path[0]) - 1
             pr.begin_mode_3d(self.g_cam)
             if self.glob_state["Current"] == GlobalState.SIMULATION:

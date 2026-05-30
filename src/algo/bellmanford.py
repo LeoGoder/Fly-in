@@ -34,6 +34,17 @@ class BellmanFord:
         return r_lst
 
     def fill_path(self, path: list) -> list:
+        tmp_path: list = []
+        len_max = 0
+        for p in path:
+            temp_len = len(p)
+            if temp_len > len_max:
+                len_max = temp_len
+        print("LEN: ",len_max)
+        for p in path:
+            lp = len(p)
+            while len(p) < len_max:
+                p.append(p[-1])
 
         return path
 
@@ -95,9 +106,10 @@ class BellmanFord:
             for hub in path[i]:
                 turn = int(costs[hub])
                 reservation[(hub, turn)] = reservation.get((hub, turn), 0) + 1
+        self.fill_path(timed_path)
         global_state["Current"] = GlobalState.SIMULATION
-        print(path)
-        print(reservation)
-        print(costs)
+        # print(path)
+        # print(reservation)
+        # print(costs)
         print(timed_path)
         return timed_path

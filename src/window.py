@@ -75,6 +75,7 @@ class Window:
         self.bellman: BellmanFord
         self.choice: str
         self.draw_choice: AlgoChoice = AlgoChoice()
+        self.drones_index: int = 0
 
     def start_window(self) -> None:
         pr.set_config_flags(pr.ConfigFlags.FLAG_WINDOW_RESIZABLE)
@@ -213,8 +214,36 @@ class Window:
                     pr.WHITE,
                 )
 
-    def draw_drones(self, path: str) -> None:
-        pass
+    def drones_index_input(self) -> None:
+        if pr.is_key_pressed(pr.KeyboardKey.KEY_LEFT):
+            self.drones_index -= 1
+        if pr.is_key_pressed(pr.KeyboardKey.KEY_RIGHT):
+            self.drones_index += 1
+        if self.drones_index < 0:
+            self.drones_index = 0
+
+    def get_hub_for_drones(self, name: str) -> Hub:
+        i = 0
+        len_hub = len(self.data[0])
+        while i < len_hub:
+            if self.data[0][i].name == name:
+                return self.data[0][i]
+            i += 1
+        return self.data[0][0]
+
+    def draw_drones(self, path: list) -> None:
+        self.drones_index_input()
+        for drones in path:
+            print(drones)
+            hub = self.get_hub_for_drones(drones[self.drones_index])
+            drones_position = pr.Vector3(int(hub.x) * 5, 5.0, int(hub.y) * 5)
+            pr.draw_model_ex(self.spaceship_model,
+                             drones_position,
+                             pr.Vector3(0, 1, 0),
+                             90,
+                             pr.Vector3(1, 1, 1),
+                             pr.WHITE
+                             )
 
     def gui_scene_manager(self) -> None:
         if self.glob_state["Current"] == GlobalState.START:
@@ -259,6 +288,7 @@ class Window:
         self.planet_model["cyan"] = pr.load_model("assets/planet_cyan.gltf")
 
     def main_loop(self) -> None:
+        drones_path: list = []
         pr.set_target_fps(self.max_fps)
         res_loc = pr.get_shader_location(self.shader, "resolution")
         time_loc = pr.get_shader_location(self.shader, "time")
@@ -291,7 +321,7 @@ class Window:
             if self.glob_state["Current"] == GlobalState.FIND:
                 if self.choice == "bellman":
                     self.bellman = BellmanFord(self.data)
-                    self.bellman.main_loop(self.glob_state)
+                    drones_path = self.bellman.main_loop(self.glob_state)
                 if self.choice == "dijkstra":
                     self.dijkstra = Dijkstra(self.data)
                     self.dijkstra.main_loop(self.glob_state)
@@ -300,6 +330,7 @@ class Window:
             pr.begin_mode_3d(self.g_cam)
             if self.glob_state["Current"] == GlobalState.SIMULATION:
                 self.mode3d_scene_manager(self.data)
+                self.draw_drones(drones_path)
             pr.end_mode_3d()
             self.gui_scene_manager()
             pr.end_drawing()

@@ -73,6 +73,7 @@ class Window:
         self.choice: str
         self.drones_index: int = 0
         self.drones_index_max: int = 0
+        self.last_drones_position: list = []
 
     def start_window(self) -> None:
         pr.set_config_flags(pr.ConfigFlags.FLAG_WINDOW_RESIZABLE)
@@ -210,6 +211,12 @@ class Window:
                     pr.WHITE,
                 )
 
+    def init_drones_position(self, path: list) -> None:
+        for drones in path:
+            hub = self.get_hub_for_drones(drones[self.drones_index])
+            drones_position = pr.Vector3(int(hub.x) * 5, 5.0, int(hub.y) * 5)
+            self.last_drones_position.append(drones_position)
+
     def drones_index_input(self) -> None:
         if pr.is_key_pressed(pr.KeyboardKey.KEY_LEFT):
             self.drones_index -= 1
@@ -231,12 +238,16 @@ class Window:
 
     def draw_drones(self, path: list) -> None:
         self.drones_index_input()
+        speed = 5
         i = 0
         for drones in path:
             hub = self.get_hub_for_drones(drones[self.drones_index])
-            drones_position = pr.Vector3(int(hub.x) * 5, 5.0, int(hub.y) * 5)
+            target_position = pr.Vector3(int(hub.x) * 5, 5.0, int(hub.y) * 5)
+            if self.last_drones_position[i] != target_position:
+                self.last_drones_position[i].x = self.last_drones_position[i].x + (target_position.x - self.last_drones_position[i].x) * (speed * self.dt)
+                self.last_drones_position[i].z = self.last_drones_position[i].z + (target_position.z - self.last_drones_position[i].z) * (speed * self.dt)
             pr.draw_model_ex(self.spaceship_model,
-                             drones_position,
+                             self.last_drones_position[i],
                              pr.Vector3(0, 1, 0),
                              90,
                              pr.Vector3(1, 1, 1),
@@ -265,17 +276,20 @@ class Window:
                     self.show_change_map = False
             if self.show_change_map is True:
                 self.change_maps()
+            # show map name
             len_map_text = pr.measure_text(self.data[2], 64)
             len_map_text_prefix = pr.measure_text(f"Map: {self.data[2]}", 64)
             map_rect = pr.Rectangle(int(self.width / 2 - (len_map_text / 2)), 20, len_map_text_prefix + 20, 64)
             pr.draw_rectangle(int(map_rect.x - 10), int(map_rect.y), int(map_rect.width), int(map_rect.height), pr.Color(0, 0, 0, 120))
             pr.draw_text(f"Map: {self.data[2]}", int(self.width / 2 - (len_map_text / 2)), 20, 64, pr.RAYWHITE)
+            # show max turn and actual turn
             max_turn_text = f"Max Turn: {self.drones_index_max + 1}"
             len_max_turn_text = pr.measure_text(max_turn_text, 24) + 20
             pr.draw_text(max_turn_text, self.width - len_max_turn_text , 10, 24, pr.RAYWHITE)
             actual_turn_text = f"Turn: {self.drones_index + 1}"
             len_actual_turn_text = pr.measure_text(actual_turn_text, 24) + 20
             pr.draw_text(actual_turn_text, self.width - len_actual_turn_text , 40, 24, pr.RAYWHITE)
+
         pr.draw_fps(10, 10)
 
     def gui_drones_id(self, path: list) -> None:
@@ -336,6 +350,7 @@ class Window:
                 self.bellman = BellmanFord(self.data)
                 drones_path = self.bellman.main_loop(self.glob_state)
                 self.drones_index_max = len(drones_path[0]) - 1
+                self.init_drones_position(drones_path)
             pr.begin_mode_3d(self.g_cam)
             if self.glob_state["Current"] == GlobalState.SIMULATION:
                 self.mode3d_scene_manager(self.data)

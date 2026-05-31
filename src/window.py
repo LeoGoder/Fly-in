@@ -125,6 +125,7 @@ class Window:
                 if os.path.isfile(self.file_choose):
                     self.show_change_map = False
                     self.drones_index = 0
+                    self.number_drone_move = []
             except Exception as e:
                 print(e)
                 print(type(self.file_choose))
@@ -191,6 +192,15 @@ class Window:
                 case "cyan":
                     pr.draw_model_ex(
                         self.planet_model["cyan"],
+                        position,
+                        pr.Vector3(0, 1, 0),
+                        self.planet_rotation,
+                        pr.Vector3(1.5, 1.5, 1.5),
+                        pr.WHITE,
+                    )
+                case "yellow":
+                    pr.draw_model_ex(
+                        self.planet_model["yellow"],
                         position,
                         pr.Vector3(0, 1, 0),
                         self.planet_rotation,
@@ -297,7 +307,10 @@ class Window:
             actual_turn_text = f"Actual Turn: {self.drones_index + 1}"
             len_actual_turn_text = pr.measure_text(actual_turn_text, 24) + 20
             pr.draw_text(actual_turn_text, self.width - len_actual_turn_text , 40, 24, pr.RAYWHITE)
-            num_drone_move_txt = f"Number of drones move this turn: {self.number_drone_move[self.drones_index]}"
+            if self.number_drone_move != []:
+                num_drone_move_txt = f"Number of drones move this turn: {self.number_drone_move[self.drones_index]}"
+            else:
+                num_drone_move_txt = f"Number of drones move this turn: 0"
             len_num_drone = pr.measure_text(num_drone_move_txt, 24) + 20
             pr.draw_text(num_drone_move_txt, self.width - len_num_drone, 70, 24, pr.RAYWHITE)
         pr.draw_fps(10, 10)
@@ -338,6 +351,7 @@ class Window:
         self.planet_model["purple"] = pr.load_model("assets/planet_purple.gltf")
         self.planet_model["gold"] = pr.load_model("assets/planet_gold.gltf")
         self.planet_model["cyan"] = pr.load_model("assets/planet_cyan.gltf")
+        self.planet_model["yellow"] = pr.load_model("assets/planet_yellow.gltf")
 
     def main_loop(self) -> None:
         drones_path: list = []

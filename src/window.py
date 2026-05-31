@@ -42,6 +42,13 @@ class Cam:
             mouse_wheel_movement = pr.get_mouse_wheel_move()
             self.cam.position.y += -mouse_wheel_movement * speed * 10
             self.cam.target.y += -mouse_wheel_movement * speed * 10
+        if pr.is_key_down(pr.KeyboardKey.KEY_SPACE):
+            self.cam.position.y += speed
+            self.cam.target.y += speed
+        if pr.is_key_down(pr.KeyboardKey.KEY_LEFT_CONTROL):
+            self.cam.position.y -= speed
+            self.cam.target.y -= speed
+
         pr.update_camera(self.cam, pr.CameraProjection.CAMERA_PERSPECTIVE)
 
 
@@ -74,6 +81,7 @@ class Window:
         self.drones_index: int = 0
         self.drones_index_max: int = 0
         self.last_drones_position: list = []
+        self.number_drone_move: list = []
 
     def start_window(self) -> None:
         pr.set_config_flags(pr.ConfigFlags.FLAG_WINDOW_RESIZABLE)
@@ -286,16 +294,34 @@ class Window:
             max_turn_text = f"Max Turn: {self.drones_index_max + 1}"
             len_max_turn_text = pr.measure_text(max_turn_text, 24) + 20
             pr.draw_text(max_turn_text, self.width - len_max_turn_text , 10, 24, pr.RAYWHITE)
-            actual_turn_text = f"Turn: {self.drones_index + 1}"
+            actual_turn_text = f"Actual Turn: {self.drones_index + 1}"
             len_actual_turn_text = pr.measure_text(actual_turn_text, 24) + 20
             pr.draw_text(actual_turn_text, self.width - len_actual_turn_text , 40, 24, pr.RAYWHITE)
-
+            num_drone_move_txt = f"Number of drones move this turn: {self.number_drone_move[self.drones_index]}"
+            len_num_drone = pr.measure_text(num_drone_move_txt, 24) + 20
+            pr.draw_text(num_drone_move_txt, self.width - len_num_drone, 70, 24, pr.RAYWHITE)
         pr.draw_fps(10, 10)
+
+    def calculate_number_drone_move(self, path: list) -> None:
+        self.number_drone_move.append(0)
+        for drone_path in range(1, self.drones_index_max + 1):
+            drone_move = 0
+            for p in path:
+                if drone_path < len(p):
+                    position_current = p[drone_path]
+                    position_before = p[drone_path - 1]
+                    if position_before != position_current:
+                        drone_move += 1
+            self.number_drone_move.append(drone_move)
+        print(self.number_drone_move)
 
     def gui_drones_id(self, path: list) -> None:
         i = 0
         for _ in path:
+            len_id_text = pr.measure_text(f"ID: {i}", 24) + 20
             drone_screen_position = pr.get_world_to_screen((self.last_drones_position[i].x, self.last_drones_position[i].y + 2.0, self.last_drones_position[i].z), self.g_cam)
+            rect = pr.Rectangle(int(drone_screen_position.x - 10), int(drone_screen_position.y - 5), len_id_text, 30)
+            pr.draw_rectangle(int(rect.x), int(rect.y), int(rect.width), int(rect.height), pr.Color(0, 0, 0, 120))
             pr.draw_text(f"ID: {i}", int(drone_screen_position.x), int(drone_screen_position.y), 24, pr.RAYWHITE)
             i += 1
 
@@ -349,6 +375,7 @@ class Window:
                 drones_path = self.bellman.main_loop(self.glob_state)
                 self.drones_index_max = len(drones_path[0]) - 1
                 self.init_drones_position(drones_path)
+                self.calculate_number_drone_move(drones_path)
             pr.begin_mode_3d(self.g_cam)
             if self.glob_state["Current"] == GlobalState.SIMULATION:
                 self.mode3d_scene_manager(self.data)

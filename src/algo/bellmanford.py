@@ -40,7 +40,7 @@ class BellmanFord:
             temp_len = len(p)
             if temp_len > len_max:
                 len_max = temp_len
-        print("LEN: ",len_max)
+        print("LEN: ", len_max)
         for p in path:
             lp = len(p)
             while len(p) < len_max:
@@ -95,7 +95,7 @@ class BellmanFord:
             if path[i]:
                 if path[i]:
                     for j, hub in enumerate(path[i]):
-                        timed_path[i].append(hub)                        
+                        timed_path[i].append(hub)
                         if j < len(path[i]) - 1:
                             next_hub = path[i][j + 1]
                             travel_cost = self.find_cost_hub(next_hub)

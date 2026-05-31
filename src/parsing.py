@@ -18,7 +18,10 @@ class Parsing:
         return True
 
     def check_zone_type(self, zone_verif: str) -> bool:
-        all_zone_possible: list = ["normal", "blocked", "restricted", "priority"]
+        all_zone_possible: list = ["normal",
+                                   "blocked",
+                                   "restricted",
+                                   "priority"]
         if zone_verif not in all_zone_possible:
             return False
         return True
@@ -34,7 +37,7 @@ class Parsing:
         if option_check not in all_options_connection:
             return False
         return True
-    
+
     def check_zone_name(self, r_data: list):
         buffer_name: list = []
         for hub in r_data[0]:
@@ -52,13 +55,15 @@ class Parsing:
         for connection in r_data[1]:
             if connection.from_hub not in buffer_name:
                 self.draw_error = True
-                self.error_text = f"Parsing error, name: {connection.from_hub}:\ndon't exist in hub name"
+                self.error_text = f"""Parsing error, name:
+{connection.from_hub}:\ndon't exist in hub name"""
 
     def check_capacity_positive(self, r_data: list) -> None:
         for hub in r_data[0]:
             if int(hub.max_drones) < 0:
                 self.draw_error = True
-                self.error_text = f"Parsing error, max_drones can't be negative: {hub.max_drones} found"
+                self.error_text = "Parsing error, " \
+                                  f"max_drones can't be negative: {hub.max_drones} found"
         for connection in r_data[1]:
             if int(connection.max_link_capacity) < 0:
                 self.draw_error = True

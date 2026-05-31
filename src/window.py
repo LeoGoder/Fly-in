@@ -294,10 +294,8 @@ class Window:
 
     def gui_drones_id(self, path: list) -> None:
         i = 0
-        for drones in path:
-            hub = self.get_hub_for_drones(drones[self.drones_index])
-            drones_position = pr.Vector3(int(hub.x) * 5, 5.0, int(hub.y) * 5)
-            drone_screen_position = pr.get_world_to_screen((drones_position.x, drones_position.y + 2.0, drones_position.z), self.g_cam)
+        for _ in path:
+            drone_screen_position = pr.get_world_to_screen((self.last_drones_position[i].x, self.last_drones_position[i].y + 2.0, self.last_drones_position[i].z), self.g_cam)
             pr.draw_text(f"ID: {i}", int(drone_screen_position.x), int(drone_screen_position.y), 24, pr.RAYWHITE)
             i += 1
 

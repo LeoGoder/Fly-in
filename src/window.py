@@ -338,6 +338,14 @@ class Window:
             pr.draw_text(f"ID: {i}", int(drone_screen_position.x), int(drone_screen_position.y), 24, pr.RAYWHITE)
             i += 1
 
+    def gui_hub_id(self, data: list) -> None:
+        for hub in data[0]:
+            hub_screen_position = pr.get_world_to_screen((int(hub.x) * 5, 2.0, int(hub.y) * 5), self.g_cam)
+            len_id_text = pr.measure_text(f"Hub: {hub.name}", 24) + 20
+            rect = pr.Rectangle(int(hub_screen_position.x - (len_id_text / 2)), int(hub_screen_position.y - 5), len_id_text, 30)
+            pr.draw_rectangle(int(rect.x), int(rect.y), int(rect.width), int(rect.height), pr.Color(0, 0, 0, 120))
+            pr.draw_text(f"Hub: {hub.name}", int(hub_screen_position.x - (len_id_text / 2) + 10), int(hub_screen_position.y), 24, pr.RAYWHITE)
+
     def frame_counter(self):
         self.current_frame += 1
         if self.current_frame > self.max_fps:
@@ -397,6 +405,7 @@ class Window:
             pr.end_mode_3d()
             self.gui_scene_manager()
             self.gui_drones_id(drones_path)
+            self.gui_hub_id(self.data)
             pr.end_drawing()
             self.frame_counter()
         pr.unload_shader(self.shader)

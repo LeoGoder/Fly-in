@@ -9,6 +9,8 @@ class BellmanFord:
         self.hubs_dict: dict = {hub.name: hub for hub in self.all_hubs}
         self.final_path: list = []
         self.cost: int = 0
+        self.RED_PRINT: str = "\033[91m"
+        self.RESET_PRINT: str = "\033[0m"
 
     def find_cost_hub(self, hub_name: str) -> int:
         hub = self.hubs_dict[hub_name]
@@ -34,19 +36,42 @@ class BellmanFord:
         return r_lst
 
     def fill_path(self, path: list) -> list:
-        tmp_path: list = []
         len_max = 0
         for p in path:
             temp_len = len(p)
             if temp_len > len_max:
                 len_max = temp_len
-        print("LEN: ", len_max)
         for p in path:
-            lp = len(p)
             while len(p) < len_max:
                 p.append(p[-1])
 
         return path
+
+    def get_max_len(self, path: list) -> int:
+        return_max = 0
+        for p in path:
+            for dp in p:
+                temp_len = len(dp)
+                if temp_len > return_max:
+                    return_max = temp_len
+        return return_max
+
+    def output_file(self, path: list) -> None:
+        max_len = self.get_max_len(path)
+        i = 1
+        try:
+            with open("Simulation_output.txt", 'w') as f:
+                while i < max_len - 1:
+                    y = 0
+                    for p in path:
+                        if i < len(p):
+                            if p[i - 1] != p[i]:
+                                f.write(f"D{y}-{p[i]} ")
+                        y += 1
+                    f.write("\n")
+                    i += 1
+        except (PermissionError, FileNotFoundError, IndexError) as e:
+            print(f"{self.RED_PRINT}Caught Error while creating output file: {e}{self.RESET_PRINT}")
 
     def main_loop(self, global_state: dict) -> list:
         start_name = self.all_hubs[0].name
@@ -107,6 +132,7 @@ class BellmanFord:
                 turn = int(costs[hub])
                 reservation[(hub, turn)] = reservation.get((hub, turn), 0) + 1
         self.fill_path(timed_path)
+        self.output_file(timed_path)
         global_state["Current"] = GlobalState.SIMULATION
         # print(path)
         # print(reservation)

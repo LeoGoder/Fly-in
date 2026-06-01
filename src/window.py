@@ -82,6 +82,7 @@ class Window:
         self.drones_index_max: int = 0
         self.last_drones_position: list = []
         self.number_drone_move: list = []
+        self.auto_play: bool = False
 
     def start_window(self) -> None:
         pr.set_config_flags(pr.ConfigFlags.FLAG_WINDOW_RESIZABLE)
@@ -244,6 +245,13 @@ class Window:
             self.drones_index = 0
         if self.drones_index > self.drones_index_max:
             self.drones_index = self.drones_index_max
+        if pr.is_key_pressed(pr.KeyboardKey.KEY_ENTER):
+            if self.auto_play is False:
+                self.auto_play = True
+            else:
+                self.auto_play = False
+        if pr.is_key_pressed(pr.KeyboardKey.KEY_R):
+            self.drones_index = 0
 
     def get_hub_for_drones(self, name: str) -> Hub:
         i = 0
@@ -272,6 +280,17 @@ class Window:
                              pr.WHITE
                              )
             i += 1
+
+    def draw_controls(self) -> None:
+        controls_text = "Controls: WASD to move\nMouse wheel to zoom\nSPACE to go up, LEFT CONTROL to go down\nLEFT and RIGHT ARROW to change turn\nF to change map\nENTER autoplay\nR to reset animation"
+        pr.draw_text(controls_text, int(15), 40, 20, pr.RAYWHITE)
+
+    def auto_play_animation(self) -> None:
+        if self.auto_play is True:
+            if self.current_frame == 30:
+                self.drones_index += 1
+                if self.drones_index > self.drones_index_max:
+                    self.drones_index = self.drones_index_max
 
     def gui_scene_manager(self) -> None:
         if self.glob_state["Current"] == GlobalState.START:
@@ -313,6 +332,7 @@ class Window:
                 num_drone_move_txt = f"Number of drones move this turn: 0"
             len_num_drone = pr.measure_text(num_drone_move_txt, 24) + 20
             pr.draw_text(num_drone_move_txt, self.width - len_num_drone, 70, 24, pr.RAYWHITE)
+            self.draw_controls()
         pr.draw_fps(10, 10)
 
     def calculate_number_drone_move(self, path: list) -> None:
@@ -402,10 +422,11 @@ class Window:
             if self.glob_state["Current"] == GlobalState.SIMULATION:
                 self.mode3d_scene_manager(self.data)
                 self.draw_drones(drones_path)
+                self.auto_play_animation()
             pr.end_mode_3d()
-            self.gui_scene_manager()
             self.gui_drones_id(drones_path)
             self.gui_hub_id(self.data)
+            self.gui_scene_manager()
             pr.end_drawing()
             self.frame_counter()
         pr.unload_shader(self.shader)

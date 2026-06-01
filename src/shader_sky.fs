@@ -15,7 +15,6 @@ float	hash(vec2 p) {
 void	main() {
     vec3 color = vec3(0.01, 0.01, 0.03);
     vec2 uv = gl_FragCoord.xy / resolution.xy;
-    // vec3 color2 = vec3(0.02, abs(sin(time)), 1.00);
     
     float speed = 30.0;
 

@@ -68,7 +68,7 @@ class Window:
         self.max_fps: int = 60
         self.scale: int = 1
         self.shader: pr.Shader
-        self.data: list = [[], []]
+        self.data: list = [[], [], []]
         self.dt: float
         self.change_map: bool = False
         self.show_change_map: bool = False
@@ -350,6 +350,9 @@ class Window:
                 num_drone_move_txt = f"Number of drones move this turn: 0"
             len_num_drone = pr.measure_text(num_drone_move_txt, 24) + 20
             pr.draw_text(num_drone_move_txt, self.width - len_num_drone, 70, 24, pr.RAYWHITE)
+            nb_drones_txt = f"Number of drones: {self.data[0][0].nb_drones}"
+            len_nb_drones = pr.measure_text(nb_drones_txt, 24) + 20
+            pr.draw_text(nb_drones_txt, self.width - len_nb_drones, 100, 24, pr.RAYWHITE)
             self.draw_controls()
         pr.draw_fps(10, 10)
 

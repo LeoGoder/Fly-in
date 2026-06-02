@@ -197,6 +197,24 @@ class Parsing:
                 self.draw_error = True
                 self.error_text = f"following color '{hub.color}' doesn't exist"
 
+    def check_duplicate_connection(self, r_data: list) -> None:
+        buffer_connection: list = []
+        for connection in r_data[1]:
+            if (connection.from_hub, connection.to_hub) not in buffer_connection and (connection.to_hub, connection.from_hub) not in buffer_connection:
+                buffer_connection.append((connection.from_hub, connection.to_hub))
+            else:
+                self.draw_error = True
+                self.error_text = f"Parsing error, duplicate connection found: {connection.from_hub} - {connection.to_hub}"
+
+    def check_position_duplicate(self, r_data: list) -> None:
+        buffer_position: list = []
+        for hub in r_data[0]:
+            if (hub.x, hub.y) not in buffer_position:
+                buffer_position.append((hub.x, hub.y))
+            else:
+                self.draw_error = True
+                self.error_text = f"Parsing error, duplicate position found: {hub.x} - {hub.y}"
+
     def check_file(self, path: str, global_state: dict, window: 'Window') -> list:
         r_data: list = [[], [], []]
         raw_data: list = []
@@ -264,9 +282,13 @@ class Parsing:
             #     print(connection.from_hub, connection.to_hub, connection.max_link_capacity)
             # print(r_data)
         if self.draw_error is False:
+            self.check_duplicate_connection(r_data)
+        if self.draw_error is False:
             self.check_zone_name(r_data)
         if self.draw_error is False:
             self.check_max_drones_number(r_data)
+        if self.draw_error is False:
+            self.check_position_duplicate(r_data)
         if self.draw_error is False:
             self.check_max_link_capacity(r_data)
         if self.draw_error is False:

@@ -272,10 +272,11 @@ class Window:
         for drones in path:
             try:
                 hub = self.get_hub_for_drones(drones[self.drones_index])
-                target_position = pr.Vector3(int(hub.x) * 5, 5.0, int(hub.y) * 5)
+                target_position = pr.Vector3(int(hub.x) * 5, 2.0, int(hub.y) * 5)
                 if self.last_drones_position[i] != target_position:
                     self.last_drones_position[i].x = self.last_drones_position[i].x + (target_position.x - self.last_drones_position[i].x) * (speed * self.dt)
                     self.last_drones_position[i].z = self.last_drones_position[i].z + (target_position.z - self.last_drones_position[i].z) * (speed * self.dt)
+                    self.last_drones_position[i].y = self.last_drones_position[i].y + (target_position.y - self.last_drones_position[i].y) * (speed * self.dt)
                 pr.draw_model_ex(self.spaceship_model,
                                 self.last_drones_position[i],
                                 pr.Vector3(0, 1, 0),
@@ -359,7 +360,7 @@ class Window:
         for _ in path:
             try:
                 len_id_text = pr.measure_text(f"ID: {i}", 24) + 20
-                drone_screen_position = pr.get_world_to_screen((self.last_drones_position[i].x, self.last_drones_position[i].y + 2.0, self.last_drones_position[i].z), self.g_cam)
+                drone_screen_position = pr.get_world_to_screen((self.last_drones_position[i].x, self.last_drones_position[i].y + 1.5, self.last_drones_position[i].z), self.g_cam)
                 rect = pr.Rectangle(int(drone_screen_position.x - 10), int(drone_screen_position.y - 5), len_id_text, 30)
                 pr.draw_rectangle(int(rect.x), int(rect.y), int(rect.width), int(rect.height), pr.Color(0, 0, 0, 120))
                 pr.draw_text(f"ID: {i}", int(drone_screen_position.x), int(drone_screen_position.y), 24, pr.RAYWHITE)
@@ -372,13 +373,15 @@ class Window:
 
     def gui_hub_id(self, data: list) -> None:
         for hub in data[0]:
+            font_size = 16
             hub_screen_position = pr.get_world_to_screen((int(hub.x) * 5, 2.0, int(hub.y) * 5), self.g_cam)
-            len_id_text = pr.measure_text(f"Hub: {hub.name}", 24) + 20
-            len_type_text = pr.measure_text(f"Type: {hub.zone}", 24) + 20
-            len_text = max(len_id_text, len_type_text)
-            rect = pr.Rectangle(int(hub_screen_position.x - (len_text / 2)), int(hub_screen_position.y - 5), len_text, 60)
+            len_id_text = pr.measure_text(f"Hub: {hub.name}", font_size) + 20
+            len_type_text = pr.measure_text(f"Type: {hub.zone}", font_size) + 20
+            len_capacity_text = pr.measure_text(f"Capacity: {hub.max_drones}", font_size) + 20
+            len_text = max(len_id_text, len_type_text, len_capacity_text)
+            rect = pr.Rectangle(int(hub_screen_position.x - (len_text / 2)), int(hub_screen_position.y - 5), len_text, font_size * 3 + 10)
             pr.draw_rectangle(int(rect.x), int(rect.y), int(rect.width), int(rect.height), pr.Color(0, 0, 0, 120))
-            pr.draw_text(f"Hub: {hub.name}\nType: {hub.zone}", int(hub_screen_position.x - (len_text / 2) + 10), int(hub_screen_position.y), 24, pr.RAYWHITE)
+            pr.draw_text(f"Hub: {hub.name}\nType: {hub.zone}\nCapacity: {hub.max_drones}", int(hub_screen_position.x - (len_text / 2) + 10), int(hub_screen_position.y), font_size, pr.RAYWHITE)
 
     def frame_counter(self):
         self.current_frame += 1

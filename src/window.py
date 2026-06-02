@@ -83,6 +83,7 @@ class Window:
         self.last_drones_position: list = []
         self.number_drone_move: list = []
         self.auto_play: bool = False
+        self.show_info: bool = True
 
     def start_window(self) -> None:
         pr.set_config_flags(pr.ConfigFlags.FLAG_WINDOW_RESIZABLE)
@@ -211,6 +212,15 @@ class Window:
                 case "rainbow":
                     pr.draw_cube(
                         position, 1.0, 1.0, 1.0, random.choice(list(Color)).value
+                    )
+                case _:
+                    pr.draw_model_ex(
+                        self.planet_model["error"],
+                        position,
+                        pr.Vector3(0, 1, 0),
+                        180.0,
+                        pr.Vector3(1.5, 1.5, 1.5),
+                        pr.WHITE,
                     )
         self.planet_rotation += 0.3
         if self.planet_rotation > 360:
@@ -355,6 +365,13 @@ class Window:
             self.number_drone_move.append(drone_move)
         print(self.number_drone_move)
 
+    def show_info_input(self) -> None:
+        if pr.is_key_pressed(pr.KeyboardKey.KEY_I):
+            if self.show_info is False:
+                self.show_info = True
+            else:
+                self.show_info = False
+
     def gui_drones_id(self, path: list) -> None:
         i = 0
         for _ in path:
@@ -389,6 +406,7 @@ class Window:
             self.current_frame = 0
 
     def load_planet_model(self) -> None:
+        self.planet_model["error"] = pr.load_model("assets/planet_error.gltf")
         self.planet_model["green"] = pr.load_model("assets/planet_green.gltf")
         self.planet_model["red"] = pr.load_model("assets/planet_red.gltf")
         self.planet_model["blue"] = pr.load_model("assets/planet_blue.gltf")
@@ -441,8 +459,10 @@ class Window:
                 self.draw_drones(drones_path)
                 self.auto_play_animation()
             pr.end_mode_3d()
-            self.gui_drones_id(drones_path)
-            self.gui_hub_id(self.data)
+            self.show_info_input()
+            if self.show_info is True:
+                self.gui_drones_id(drones_path)
+                self.gui_hub_id(self.data)
             self.gui_scene_manager()
             pr.end_drawing()
             self.frame_counter()

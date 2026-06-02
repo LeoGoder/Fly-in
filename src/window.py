@@ -128,6 +128,7 @@ class Window:
                     self.show_change_map = False
                     self.drones_index = 0
                     self.number_drone_move = []
+                    self.last_drones_position = []
             except Exception as e:
                 print(e)
                 print(type(self.file_choose))
@@ -299,7 +300,7 @@ class Window:
                 print(f"Caught error: {e}")
 
     def draw_controls(self) -> None:
-        controls_text = "Controls: WASD to move\nMouse wheel to zoom\nSPACE to go up, LEFT CONTROL to go down\nLEFT and RIGHT ARROW to change turn\nF to change map\nENTER autoplay\nR to reset animation"
+        controls_text = "Controls: WASD to move\nMouse wheel to zoom\nSPACE to go up, LEFT CONTROL to go down\nLEFT and RIGHT ARROW to change turn\nF to change map\nENTER autoplay\nR to reset animation\nI to show/hide info"
         pr.draw_text(controls_text, int(15), 40, 20, pr.RAYWHITE)
 
     def auto_play_animation(self) -> None:

@@ -1,6 +1,7 @@
-D0-junction D1-junction 
-D0-path_a D1-path_b D2-junction D3-junction 
-D0-goal D1-goal D2-path_a D3-path_b 
-D2-goal D3-goal 
+D0-waypoint1 
+D0-waypoint2 D1-waypoint1 
+D0-goal D1-waypoint2 
+D1-goal 
+
 
 

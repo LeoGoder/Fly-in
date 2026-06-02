@@ -366,8 +366,9 @@ class Window:
                 i += 1
             except (IndexError) as e:
                 error_text = "Failed to find path with the map choose try another one"
-                len_error_text = pr.measure_text(error_text, 24)
-                pr.draw_text(error_text, int((self.width - len_error_text) / 2), int(self.height - 24), 24, pr.RAYWHITE)
+                font_size = 44
+                len_error_text = pr.measure_text(error_text, font_size)
+                pr.draw_text(error_text, int((self.width - len_error_text) / 2), int(self.height - font_size), font_size, pr.RED)
 
     def gui_hub_id(self, data: list) -> None:
         for hub in data[0]:

@@ -182,6 +182,14 @@ class Parsing:
             self.draw_error = True
             self.error_text = f"{e}"
 
+    def check_max_link_capacity(self, r_data: list) -> None:
+        try:
+            for connection in r_data[1]:
+                int(connection.max_link_capacity)
+        except ValueError as e:
+            self.draw_error = True
+            self.error_text = f"{e}"
+
     def check_color(self, r_data: list) ->  None:
         lst_color: list = ["red", "blue", "green", "cyan", "gold", "rainbow", "brown", "purple", "orange", "black", "darkred", "crimson", "yellow"]
         for hub in r_data[0]:
@@ -259,6 +267,8 @@ class Parsing:
             self.check_zone_name(r_data)
         if self.draw_error is False:
             self.check_max_drones_number(r_data)
+        if self.draw_error is False:
+            self.check_max_link_capacity(r_data)
         if self.draw_error is False:
             self.check_capacity_positive(r_data)
         # if self.draw_error is False:

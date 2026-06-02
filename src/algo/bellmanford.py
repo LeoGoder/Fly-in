@@ -14,17 +14,19 @@ class BellmanFord:
 
     def find_cost_hub(self, hub_name: str) -> int:
         hub = self.hubs_dict[hub_name]
-        match hub.type_hub:
+        match hub.zone:
             case "normal":
                 return 1
             case "blocked":
-                return 100000
+                print(f"{self.RED_PRINT}Blocked hub detected: {hub_name}{self.RESET_PRINT}")
+                return float('inf')
             case "restricted":
                 return 2
             case "priority":
                 return 1
             case _:
-                return 2
+                print(f"{self.RED_PRINT}Unknown zone type for hub {hub_name}: {hub.zone}{self.RESET_PRINT}")
+                return 1
 
     def get_connection(self, hub_name: str) -> list:
         r_lst: list = []
@@ -89,6 +91,8 @@ class BellmanFord:
                     forward = (conn.from_hub, conn.to_hub)
                     backward = (conn.to_hub, conn.from_hub)
                     for actual_hub, neighbour_hub in [forward, backward]:
+                        if self.find_cost_hub(neighbour_hub) == float('inf'):
+                            continue
                         if costs[actual_hub] == float("inf"):
                             continue
                         estimation_turn = costs[actual_hub] + self.find_cost_hub(neighbour_hub)

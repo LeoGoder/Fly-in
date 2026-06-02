@@ -232,9 +232,12 @@ class Window:
 
     def init_drones_position(self, path: list) -> None:
         for drones in path:
-            hub = self.get_hub_for_drones(drones[self.drones_index])
-            drones_position = pr.Vector3(int(hub.x) * 5, 5.0, int(hub.y) * 5)
-            self.last_drones_position.append(drones_position)
+            try:
+                hub = self.get_hub_for_drones(drones[self.drones_index])
+                drones_position = pr.Vector3(int(hub.x) * 5, 5.0, int(hub.y) * 5)
+                self.last_drones_position.append(drones_position)
+            except IndexError as e:
+                print(f"Caught error: {e}")
 
     def drones_index_input(self) -> None:
         if pr.is_key_pressed(pr.KeyboardKey.KEY_LEFT):
@@ -267,19 +270,22 @@ class Window:
         speed = 5
         i = 0
         for drones in path:
-            hub = self.get_hub_for_drones(drones[self.drones_index])
-            target_position = pr.Vector3(int(hub.x) * 5, 5.0, int(hub.y) * 5)
-            if self.last_drones_position[i] != target_position:
-                self.last_drones_position[i].x = self.last_drones_position[i].x + (target_position.x - self.last_drones_position[i].x) * (speed * self.dt)
-                self.last_drones_position[i].z = self.last_drones_position[i].z + (target_position.z - self.last_drones_position[i].z) * (speed * self.dt)
-            pr.draw_model_ex(self.spaceship_model,
-                             self.last_drones_position[i],
-                             pr.Vector3(0, 1, 0),
-                             90,
-                             pr.Vector3(1, 1, 1),
-                             pr.WHITE
-                             )
-            i += 1
+            try:
+                hub = self.get_hub_for_drones(drones[self.drones_index])
+                target_position = pr.Vector3(int(hub.x) * 5, 5.0, int(hub.y) * 5)
+                if self.last_drones_position[i] != target_position:
+                    self.last_drones_position[i].x = self.last_drones_position[i].x + (target_position.x - self.last_drones_position[i].x) * (speed * self.dt)
+                    self.last_drones_position[i].z = self.last_drones_position[i].z + (target_position.z - self.last_drones_position[i].z) * (speed * self.dt)
+                pr.draw_model_ex(self.spaceship_model,
+                                self.last_drones_position[i],
+                                pr.Vector3(0, 1, 0),
+                                90,
+                                pr.Vector3(1, 1, 1),
+                                pr.WHITE
+                                )
+                i += 1
+            except (IndexError) as e:
+                print(f"Caught error: {e}")
 
     def draw_controls(self) -> None:
         controls_text = "Controls: WASD to move\nMouse wheel to zoom\nSPACE to go up, LEFT CONTROL to go down\nLEFT and RIGHT ARROW to change turn\nF to change map\nENTER autoplay\nR to reset animation"
@@ -351,20 +357,27 @@ class Window:
     def gui_drones_id(self, path: list) -> None:
         i = 0
         for _ in path:
-            len_id_text = pr.measure_text(f"ID: {i}", 24) + 20
-            drone_screen_position = pr.get_world_to_screen((self.last_drones_position[i].x, self.last_drones_position[i].y + 2.0, self.last_drones_position[i].z), self.g_cam)
-            rect = pr.Rectangle(int(drone_screen_position.x - 10), int(drone_screen_position.y - 5), len_id_text, 30)
-            pr.draw_rectangle(int(rect.x), int(rect.y), int(rect.width), int(rect.height), pr.Color(0, 0, 0, 120))
-            pr.draw_text(f"ID: {i}", int(drone_screen_position.x), int(drone_screen_position.y), 24, pr.RAYWHITE)
-            i += 1
+            try:
+                len_id_text = pr.measure_text(f"ID: {i}", 24) + 20
+                drone_screen_position = pr.get_world_to_screen((self.last_drones_position[i].x, self.last_drones_position[i].y + 2.0, self.last_drones_position[i].z), self.g_cam)
+                rect = pr.Rectangle(int(drone_screen_position.x - 10), int(drone_screen_position.y - 5), len_id_text, 30)
+                pr.draw_rectangle(int(rect.x), int(rect.y), int(rect.width), int(rect.height), pr.Color(0, 0, 0, 120))
+                pr.draw_text(f"ID: {i}", int(drone_screen_position.x), int(drone_screen_position.y), 24, pr.RAYWHITE)
+                i += 1
+            except (IndexError) as e:
+                error_text = "Failed to find path with the map choose try another one"
+                len_error_text = pr.measure_text(error_text, 24)
+                pr.draw_text(error_text, int((self.width - len_error_text) / 2), int(self.height - 24), 24, pr.RAYWHITE)
 
     def gui_hub_id(self, data: list) -> None:
         for hub in data[0]:
             hub_screen_position = pr.get_world_to_screen((int(hub.x) * 5, 2.0, int(hub.y) * 5), self.g_cam)
             len_id_text = pr.measure_text(f"Hub: {hub.name}", 24) + 20
-            rect = pr.Rectangle(int(hub_screen_position.x - (len_id_text / 2)), int(hub_screen_position.y - 5), len_id_text, 30)
+            len_type_text = pr.measure_text(f"Type: {hub.zone}", 24) + 20
+            len_text = max(len_id_text, len_type_text)
+            rect = pr.Rectangle(int(hub_screen_position.x - (len_text / 2)), int(hub_screen_position.y - 5), len_text, 60)
             pr.draw_rectangle(int(rect.x), int(rect.y), int(rect.width), int(rect.height), pr.Color(0, 0, 0, 120))
-            pr.draw_text(f"Hub: {hub.name}", int(hub_screen_position.x - (len_id_text / 2) + 10), int(hub_screen_position.y), 24, pr.RAYWHITE)
+            pr.draw_text(f"Hub: {hub.name}\nType: {hub.zone}", int(hub_screen_position.x - (len_text / 2) + 10), int(hub_screen_position.y), 24, pr.RAYWHITE)
 
     def frame_counter(self):
         self.current_frame += 1

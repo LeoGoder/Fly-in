@@ -300,7 +300,7 @@ class Window:
                 print(f"Caught error: {e}")
 
     def draw_controls(self) -> None:
-        controls_text = "Controls: WASD to move\nMouse wheel to zoom\nSPACE to go up, LEFT CONTROL to go down\nLEFT and RIGHT ARROW to change turn\nF to change map\nENTER autoplay\nR to reset animation\nI to show/hide info"
+        controls_text = "Controls: WASD to move\nMouse wheel to zoom\nSPACE to go up, LEFT CONTROL to go down\nSHIFT to speed up\nLEFT and RIGHT ARROW to change turn\nF to change map\nENTER autoplay\nR to reset animation\nI to show/hide info"
         pr.draw_text(controls_text, int(15), 40, 20, pr.RAYWHITE)
 
     def auto_play_animation(self) -> None:
@@ -454,9 +454,10 @@ class Window:
             if self.glob_state["Current"] == GlobalState.FIND:
                 self.bellman = BellmanFord(self.data)
                 drones_path = self.bellman.main_loop(self.glob_state)
-                self.drones_index_max = len(drones_path[0]) - 1
-                self.init_drones_position(drones_path)
-                self.calculate_number_drone_move(drones_path)
+                if drones_path != []:
+                    self.drones_index_max = len(drones_path[0]) - 1
+                    self.init_drones_position(drones_path)
+                    self.calculate_number_drone_move(drones_path)
             pr.begin_mode_3d(self.g_cam)
             if self.glob_state["Current"] == GlobalState.SIMULATION:
                 self.mode3d_scene_manager(self.data)

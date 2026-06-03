@@ -45,10 +45,12 @@ class Parsing:
                 buffer_name.append(hub.name)
             elif hub.name in buffer_name:
                 self.draw_error = True
-                self.error_text = "Parsing error, duplicate name found"
+                self.error_text = "Parsing error, duplicate name \
+found"
             if "-" in hub.name:
                 self.draw_error = True
-                self.error_text = "Parsing error, found '-' in hub name"
+                self.error_text = "Parsing error, found '-' in \
+hub name"
             if " " in hub.name:
                 self.draw_error = True
                 self.error_text = "Parsing error, found space in hub name"
@@ -62,12 +64,16 @@ class Parsing:
         for hub in r_data[0]:
             if int(hub.max_drones) < 0:
                 self.draw_error = True
-                self.error_text = "Parsing error, " \
-                                  f"max_drones can't be negative: {hub.max_drones} found"
+                msg = "Parsing error, max_drones can't be \
+negative: {}".format(hub.max_drones)
+                self.error_text = msg + " found"
         for connection in r_data[1]:
             if int(connection.max_link_capacity) < 0:
                 self.draw_error = True
-                self.error_text = f"Parsing error, max_link_capacity can't be negative: {connection.max_link_capacity} found"
+                msg = "Parsing error, max_link_capacity \
+can't be negative: {}".format(
+                    connection.max_link_capacity)
+                self.error_text = msg + " found"
 
     def add_hub(self, data: list, temp_nb_drones: int, r_data: list) -> int:
         hub_option_parsed: dict = {
@@ -89,7 +95,9 @@ class Parsing:
                     arg = arg.split("=")
                     if self.check_options_hub(arg[0]) is False:
                         self.draw_error = True
-                        self.error_text = f"Error on hub option {arg[0]} in invalid"
+                        msg = "Error on hub option {} in \
+invalid".format(arg[0])
+                        self.error_text = msg
                         break
                     if arg:
                         pass
@@ -102,8 +110,13 @@ class Parsing:
             # print(hub_option_parsed)
         if data[0] == "start_hub:":
             try:
-                
-                hub_instance = Hub(name=data[1], x=data[2], y=data[3], nb_drones=int(temp_nb_drones), type_hub="start_hub", zone=hub_option_parsed["zone"], color=hub_option_parsed["color"], max_drones=hub_option_parsed["max_drones"])
+                hub_instance = Hub(
+                    name=data[1], x=data[2], y=data[3],
+                    nb_drones=int(temp_nb_drones),
+                    type_hub="start_hub",
+                    zone=hub_option_parsed["zone"],
+                    color=hub_option_parsed["color"],
+                    max_drones=hub_option_parsed["max_drones"])
             except (ValueError, IndexError) as e:
                 print(f"Caught error {e}")
                 self.draw_error = True
@@ -112,7 +125,12 @@ class Parsing:
             r_data[0].append(hub_instance)
         elif data[0] == "hub:":
             try:
-                hub_instance = Hub(name=data[1], x=data[2], y=data[3], type_hub="hub", zone=hub_option_parsed["zone"], color=hub_option_parsed["color"], max_drones=hub_option_parsed["max_drones"])
+                hub_instance = Hub(
+                    name=data[1], x=data[2], y=data[3],
+                    type_hub="hub",
+                    zone=hub_option_parsed["zone"],
+                    color=hub_option_parsed["color"],
+                    max_drones=hub_option_parsed["max_drones"])
             except (ValueError, IndexError) as e:
                 print(f"Caught error {e}")
                 self.draw_error = True
@@ -121,7 +139,12 @@ class Parsing:
             r_data[0].append(hub_instance)
         elif data[0] == "end_hub:":
             try:
-                hub_instance = Hub(name=data[1], x=data[2], y=data[3], type_hub="end_hub",  zone=hub_option_parsed["zone"], color=hub_option_parsed["color"], max_drones=hub_option_parsed["max_drones"])
+                hub_instance = Hub(
+                    name=data[1], x=data[2], y=data[3],
+                    type_hub="end_hub",
+                    zone=hub_option_parsed["zone"],
+                    color=hub_option_parsed["color"],
+                    max_drones=hub_option_parsed["max_drones"])
             except (ValueError, IndexError) as e:
                 print(f"Caught error {e}")
                 self.draw_error = True
@@ -131,10 +154,12 @@ class Parsing:
         if len(r_data[0]) > 0:
             if self.check_zone_type(r_data[0][-1].zone) is False:
                 self.draw_error = True
-                self.error_text = f"Error on parsing invalid zone entered for {r_data[0][-1].name}"
+                self.error_text = (f"Error on parsing invalid zone \
+entered for "
+                                   f"{r_data[0][-1].name}")
                 return 1
         return 0
-    
+
     def add_connection(self, data: list, r_data: list) -> int:
         options_default = {"max_link_capacity": 1}
         if data[0] == "connection:":
@@ -149,7 +174,9 @@ class Parsing:
                     option = option.split("=")
                     if self.check_options_connection(option[0]) is False:
                         self.draw_error = True
-                        self.error_text = f"Error on connection option {option[0]} is invalid"
+                        msg = "Error on connection option \
+{} is invalid".format(option[0])
+                        self.error_text = msg
                     if option:
                         pass
                     options_default.update({option[0]: option[1]})
@@ -161,7 +188,10 @@ class Parsing:
         if data[0] == "connection:":
             data_split = data[1].split("-")
             try:
-                connection_instance = Connection(from_hub=data_split[0], to_hub=data_split[1], max_link_capacity=options_default["max_link_capacity"])
+                connection_instance = Connection(
+                    from_hub=data_split[0],
+                    to_hub=data_split[1],
+                    max_link_capacity=options_default["max_link_capacity"])
             except (ValueError, IndexError) as e:
                 print(f"Caught error {e}")
                 self.draw_error = True
@@ -190,21 +220,21 @@ class Parsing:
             self.draw_error = True
             self.error_text = f"{e}"
 
-    def check_color(self, r_data: list) ->  None:
-        lst_color: list = ["red", "blue", "green", "cyan", "gold", "rainbow", "brown", "purple", "orange", "black", "darkred", "crimson", "yellow"]
-        for hub in r_data[0]:
-            if hub.color.lower() not in lst_color:
-                self.draw_error = True
-                self.error_text = f"following color '{hub.color}' doesn't exist"
-
     def check_duplicate_connection(self, r_data: list) -> None:
         buffer_connection: list = []
         for connection in r_data[1]:
-            if (connection.from_hub, connection.to_hub) not in buffer_connection and (connection.to_hub, connection.from_hub) not in buffer_connection:
-                buffer_connection.append((connection.from_hub, connection.to_hub))
+            if (((connection.from_hub, connection.to_hub)
+                 not in buffer_connection)
+                and ((connection.to_hub, connection.from_hub)
+                     not in buffer_connection)):
+                buffer_connection.append(
+                    (connection.from_hub, connection.to_hub))
             else:
                 self.draw_error = True
-                self.error_text = f"Parsing error, duplicate connection found: {connection.from_hub} - {connection.to_hub}"
+                self.error_text = (
+                    f"Parsing error, duplicate connection \
+found: {connection.from_hub} - \
+{connection.to_hub}")
 
     def check_position_duplicate(self, r_data: list) -> None:
         buffer_position: list = []
@@ -213,9 +243,12 @@ class Parsing:
                 buffer_position.append((hub.x, hub.y))
             else:
                 self.draw_error = True
-                self.error_text = f"Parsing error, duplicate position found: {hub.x} - {hub.y}"
+                self.error_text = (
+                    f"Parsing error, duplicate position \
+found: {hub.x} - {hub.y}")
 
-    def check_file(self, path: str, global_state: dict, window: 'Window') -> list:
+    def check_file(self, path: str, global_state: dict,
+                   window) -> list:
         r_data: list = [[], [], []]
         raw_data: list = []
         temp_nb_drones: int = 0
@@ -228,10 +261,12 @@ class Parsing:
                         line_split = line.split()
                         if self.is_comments is False:
                             continue
-                        if self.is_comments(line_split) and line_split != []:
+                        if (self.is_comments(line_split) and
+                                line_split != []):
                             raw_data.append(line_split)
 
-            except (FileNotFoundError, PermissionError, UnicodeDecodeError) as e:
+            except (FileNotFoundError, PermissionError,
+                    UnicodeDecodeError) as e:
                 print(f"Caught error {e}")
                 self.draw_error = True
                 self.error_text = str(e)
@@ -251,7 +286,8 @@ class Parsing:
             if type(temp_nb_drones) is not int:
                 if temp_nb_drones.isdigit() is False:
                     self.draw_error = True
-                    self.error_text = "Caught error, nb_drones is not a number or is negatives"
+                    self.error_text = ("Caught error, nb_drones is \
+not a number or is negatives")
 
         # check number of start and end hub
         if self.draw_error is False:
@@ -265,10 +301,12 @@ class Parsing:
                     raw_data[i][4:] = [",".join(raw_data[i][4:])]
             if count_start_hub != 1:
                 self.draw_error = True
-                self.error_text = "Error on parsing number of start_hub not equal to 1"
+                self.error_text = ("Error on parsing number of \
+start_hub not equal to 1")
             if count_end_hub != 1:
                 self.draw_error = True
-                self.error_text = "Error on parsing number of end_hub not equal to 1"
+                self.error_text = ("Error on parsing number of \
+end_hub not equal to 1")
 
         # create new data for data list
         if self.draw_error is False:
@@ -277,10 +315,8 @@ class Parsing:
                 self.add_hub(data, temp_nb_drones, r_data)
                 self.add_connection(data, r_data)
             for hub in r_data[0]:
-                print(hub.name, hub.x, hub.y, hub.type_hub, hub.zone, hub.color, hub.max_drones)
-            # for connection in r_data[1]:
-            #     print(connection.from_hub, connection.to_hub, connection.max_link_capacity)
-            # print(r_data)
+                print(hub.name, hub.x, hub.y, hub.type_hub,
+                      hub.zone, hub.color, hub.max_drones)
         if self.draw_error is False:
             self.check_duplicate_connection(r_data)
         if self.draw_error is False:
@@ -293,20 +329,26 @@ class Parsing:
             self.check_max_link_capacity(r_data)
         if self.draw_error is False:
             self.check_capacity_positive(r_data)
-        # if self.draw_error is False:
-        #     self.check_color(r_data)
         if self.draw_error is False:
             global_state["Current"] = GlobalState.FIND
 
         else:
-            if self.error_popup.draw_error_popup(pr.get_screen_width(), pr.get_screen_height(), self.error_text):
+            err_popup_result = (
+                self.error_popup.draw_error_popup(
+                    pr.get_screen_width(),
+                    pr.get_screen_height(),
+                    self.error_text))
+            if err_popup_result:
                 self.draw_error = False
                 window.file_choose = ""
-                window.file_tree.path = os.path.dirname(window.file_tree.path)
+                window.file_tree.path = (
+                    os.path.dirname(window.file_tree.path))
                 if window.file_tree.path == "":
                     window.file_tree.path = "."
-                window.file_tree.dirs = window.file_tree.get_dir(window.file_tree.path)
-                window.file_tree.files = window.file_tree.get_files(window.file_tree.path)
+                window.file_tree.dirs = (
+                    window.file_tree.get_dir(window.file_tree.path))
+                window.file_tree.files = (
+                    window.file_tree.get_files(window.file_tree.path))
                 self.error_text = ""
                 global_state["Current"] = GlobalState.START
         return r_data

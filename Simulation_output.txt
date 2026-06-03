@@ -1,7 +1,11 @@
-D0-waypoint1 
-D0-waypoint2 D1-waypoint1 
-D0-goal D1-waypoint2 
-D1-goal 
+D0-fast_junction D1-slow_path1 
+D0-fast_path D1-slow_path2 D2-fast_junction D3-slow_path1 
+D0-merge_point D1-merge_point D2-fast_path D3-slow_path2 D4-fast_junction 
+D0-goal D1-goal D2-merge_point D3-merge_point D4-fast_path 
+D2-goal D3-goal D4-merge_point 
+D4-goal 
+
+
 
 
 

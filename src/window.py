@@ -213,8 +213,9 @@ class Window:
                         pr.WHITE,
                     )
                 case "rainbow":
+                    color_choice = random.choice(list(Color)).value
                     pr.draw_cube(
-                        position, 1.0, 1.0, 1.0, random.choice(list(Color)).value
+                        position, 1.0, 1.0, 1.0, color_choice
                     )
                 case _:
                     pr.draw_model_ex(
@@ -237,18 +238,23 @@ class Window:
                 if connection.to_hub == hub.name:
                     to_hub = hub
             if from_hub is not None and to_hub is not None:
-                pr.draw_line_3d(
-                    pr.Vector3(int(from_hub.x) * 5, 0.0, int(from_hub.y) * 5),
-                    pr.Vector3(int(to_hub.x) * 5, 0.0, int(to_hub.y) * 5),
-                    pr.WHITE,
-                )
+                from_pos = pr.Vector3(
+                    int(from_hub.x) * 5, 0.0,
+                    int(from_hub.y) * 5)
+                to_pos = pr.Vector3(
+                    int(to_hub.x) * 5, 0.0,
+                    int(to_hub.y) * 5)
+                pr.draw_line_3d(from_pos, to_pos, pr.WHITE)
 
     def init_drones_position(self, path: list) -> None:
         for drones in path:
             try:
-                hub = self.get_hub_for_drones(drones[self.drones_index])
-                drones_position = pr.Vector3(int(hub.x) * 5, 5.0, int(hub.y) * 5)
-                self.last_drones_position.append(drones_position)
+                hub = self.get_hub_for_drones(
+                    drones[self.drones_index])
+                drones_position = pr.Vector3(
+                    int(hub.x) * 5, 5.0, int(hub.y) * 5)
+                self.last_drones_position.append(
+                    drones_position)
             except IndexError as e:
                 print(f"Caught error: {e}")
 
@@ -284,26 +290,49 @@ class Window:
         i = 0
         for drones in path:
             try:
-                hub = self.get_hub_for_drones(drones[self.drones_index])
-                target_position = pr.Vector3(int(hub.x) * 5, 2.0, int(hub.y) * 5)
+                hub = self.get_hub_for_drones(
+                    drones[self.drones_index])
+                target_position = pr.Vector3(
+                    int(hub.x) * 5, 2.0,
+                    int(hub.y) * 5)
                 if self.last_drones_position[i] != target_position:
-                    self.last_drones_position[i].x = self.last_drones_position[i].x + (target_position.x - self.last_drones_position[i].x) * (speed * self.dt)
-                    self.last_drones_position[i].z = self.last_drones_position[i].z + (target_position.z - self.last_drones_position[i].z) * (speed * self.dt)
-                    self.last_drones_position[i].y = self.last_drones_position[i].y + (target_position.y - self.last_drones_position[i].y) * (speed * self.dt)
-                pr.draw_model_ex(self.spaceship_model,
-                                self.last_drones_position[i],
-                                pr.Vector3(0, 1, 0),
-                                90,
-                                pr.Vector3(1, 1, 1),
-                                pr.WHITE
-                                )
+                    dx = (target_position.x -
+                          self.last_drones_position[i].x)
+                    self.last_drones_position[i].x += (
+                        dx * (speed * self.dt))
+                    dz = (target_position.z -
+                          self.last_drones_position[i].z)
+                    self.last_drones_position[i].z += (
+                        dz * (speed * self.dt))
+                    dy = (target_position.y -
+                          self.last_drones_position[i].y)
+                    self.last_drones_position[i].y += (
+                        dy * (speed * self.dt))
+                pr.draw_model_ex(
+                    self.spaceship_model,
+                    self.last_drones_position[i],
+                    pr.Vector3(0, 1, 0),
+                    90,
+                    pr.Vector3(1, 1, 1),
+                    pr.WHITE
+                )
                 i += 1
-            except (IndexError) as e:
+            except IndexError as e:
                 print(f"Caught error: {e}")
 
     def draw_controls(self) -> None:
-        controls_text = "Controls: WASD to move\nMouse wheel to zoom\nSPACE to go up, LEFT CONTROL to go down\nSHIFT to speed up\nLEFT and RIGHT ARROW to change turn\nF to change map\nENTER autoplay\nR to reset animation\nI to show/hide info"
-        pr.draw_text(controls_text, int(15), 40, 20, pr.RAYWHITE)
+        controls_text = (
+            "Controls: WASD to move\n"
+            "Mouse wheel to zoom\n"
+            "SPACE to go up, LEFT CONTROL to go down\n"
+            "SHIFT to speed up\n"
+            "LEFT and RIGHT ARROW to change turn\n"
+            "F to change map\n"
+            "ENTER autoplay\n"
+            "R to reset animation\n"
+            "I to show/hide info")
+        pr.draw_text(controls_text, int(15), 40, 20,
+                     pr.RAYWHITE)
 
     def auto_play_animation(self) -> None:
         if self.auto_play is True:
@@ -316,13 +345,18 @@ class Window:
         if self.glob_state["Current"] == GlobalState.START:
             self.start_gui_scene()
         elif self.glob_state["Current"] == GlobalState.PARSING:
-            self.data = self.parsing.check_file(self.file_choose, self.glob_state, self)
+            self.data = self.parsing.check_file(
+                self.file_choose, self.glob_state, self)
         elif self.glob_state["Current"] == GlobalState.SIMULATION:
             if pr.is_key_pressed(pr.KeyboardKey.KEY_F):
                 self.file_choose = ""
                 self.file_tree.path = "."
-                self.file_tree.dirs = self.file_tree.get_dir(self.file_tree.path)
-                self.file_tree.files = self.file_tree.get_files(self.file_tree.path)
+                self.file_tree.dirs = (
+                    self.file_tree.get_dir(
+                        self.file_tree.path))
+                self.file_tree.files = (
+                    self.file_tree.get_files(
+                        self.file_tree.path))
                 if self.change_map is True:
                     self.change_map = False
                 else:
@@ -335,26 +369,53 @@ class Window:
                 self.change_maps()
             # show map name
             len_map_text = pr.measure_text(self.data[2], 64)
-            len_map_text_prefix = pr.measure_text(f"Map: {self.data[2]}", 64)
-            map_rect = pr.Rectangle(int(self.width / 2 - (len_map_text / 2)), 20, len_map_text_prefix + 20, 64)
-            pr.draw_rectangle(int(map_rect.x - 10), int(map_rect.y), int(map_rect.width), int(map_rect.height), pr.Color(0, 0, 0, 120))
-            pr.draw_text(f"Map: {self.data[2]}", int(self.width / 2 - (len_map_text / 2)), 20, 64, pr.RAYWHITE)
+            map_label = f"Map: {self.data[2]}"
+            len_map_text_prefix = pr.measure_text(map_label, 64)
+            map_x = int(self.width / 2 - (len_map_text / 2))
+            map_rect = pr.Rectangle(
+                map_x, 20, len_map_text_prefix + 20, 64)
+            pr.draw_rectangle(
+                int(map_rect.x - 10), int(map_rect.y),
+                int(map_rect.width), int(map_rect.height),
+                pr.Color(0, 0, 0, 120))
+            pr.draw_text(map_label, map_x, 20, 64,
+                         pr.RAYWHITE)
             # show max turn and actual turn
-            max_turn_text = f"Max Turn: {self.drones_index_max + 1}"
-            len_max_turn_text = pr.measure_text(max_turn_text, 24) + 20
-            pr.draw_text(max_turn_text, self.width - len_max_turn_text , 10, 24, pr.RAYWHITE)
-            actual_turn_text = f"Actual Turn: {self.drones_index + 1}"
-            len_actual_turn_text = pr.measure_text(actual_turn_text, 24) + 20
-            pr.draw_text(actual_turn_text, self.width - len_actual_turn_text , 40, 24, pr.RAYWHITE)
+            max_turn_text = (
+                f"Max Turn: {self.drones_index_max + 1}")
+            len_max_turn_text = (
+                pr.measure_text(max_turn_text, 24) + 20)
+            pr.draw_text(max_turn_text,
+                         self.width - len_max_turn_text, 10,
+                         24, pr.RAYWHITE)
+            actual_turn_text = (
+                f"Actual Turn: {self.drones_index + 1}")
+            len_actual_turn_text = (
+                pr.measure_text(actual_turn_text, 24) + 20)
+            pr.draw_text(actual_turn_text,
+                         self.width - len_actual_turn_text, 40,
+                         24, pr.RAYWHITE)
             if self.number_drone_move != []:
-                num_drone_move_txt = f"Number of drones move this turn: {self.number_drone_move[self.drones_index]}"
+                move_count = self.number_drone_move[
+                    self.drones_index]
+                num_drone_move_txt = (
+                    f"Number of drones move this turn: "
+                    f"{move_count}")
             else:
-                num_drone_move_txt = f"Number of drones move this turn: 0"
-            len_num_drone = pr.measure_text(num_drone_move_txt, 24) + 20
-            pr.draw_text(num_drone_move_txt, self.width - len_num_drone, 70, 24, pr.RAYWHITE)
-            nb_drones_txt = f"Number of drones: {self.data[0][0].nb_drones}"
-            len_nb_drones = pr.measure_text(nb_drones_txt, 24) + 20
-            pr.draw_text(nb_drones_txt, self.width - len_nb_drones, 100, 24, pr.RAYWHITE)
+                num_drone_move_txt = (
+                    "Number of drones move this turn: 0")
+            len_num_drone = (
+                pr.measure_text(num_drone_move_txt, 24) + 20)
+            pr.draw_text(num_drone_move_txt,
+                         self.width - len_num_drone, 70, 24,
+                         pr.RAYWHITE)
+            nb_drones = self.data[0][0].nb_drones
+            nb_drones_txt = f"Number of drones: {nb_drones}"
+            len_nb_drones = (
+                pr.measure_text(nb_drones_txt, 24) + 20)
+            pr.draw_text(nb_drones_txt,
+                         self.width - len_nb_drones, 100, 24,
+                         pr.RAYWHITE)
             self.draw_controls()
         pr.draw_fps(10, 10)
 
@@ -382,29 +443,82 @@ class Window:
         i = 0
         for _ in path:
             try:
-                len_id_text = pr.measure_text(f"ID: {i}", 24) + 20
-                drone_screen_position = pr.get_world_to_screen((self.last_drones_position[i].x, self.last_drones_position[i].y + 1.5, self.last_drones_position[i].z), self.g_cam)
-                rect = pr.Rectangle(int(drone_screen_position.x - 10), int(drone_screen_position.y - 5), len_id_text, 30)
-                pr.draw_rectangle(int(rect.x), int(rect.y), int(rect.width), int(rect.height), pr.Color(0, 0, 0, 120))
-                pr.draw_text(f"ID: {i}", int(drone_screen_position.x), int(drone_screen_position.y), 24, pr.RAYWHITE)
+                id_text = f"ID: {i}"
+                len_id_text = pr.measure_text(id_text, 24) + 20
+                drone_pos = self.last_drones_position[i]
+                world_pos = (
+                    drone_pos.x, drone_pos.y + 1.5,
+                    drone_pos.z)
+                drone_screen_position = (
+                    pr.get_world_to_screen(
+                        world_pos, self.g_cam))
+                rect = pr.Rectangle(
+                    int(drone_screen_position.x - 10),
+                    int(drone_screen_position.y - 5),
+                    len_id_text, 30)
+                pr.draw_rectangle(
+                    int(rect.x), int(rect.y),
+                    int(rect.width), int(rect.height),
+                    pr.Color(0, 0, 0, 120))
+                pr.draw_text(
+                    id_text,
+                    int(drone_screen_position.x),
+                    int(drone_screen_position.y), 24,
+                    pr.RAYWHITE)
                 i += 1
-            except (IndexError) as e:
-                error_text = "Failed to find path with the map choose try another one"
+            except IndexError:
+                error_text = (
+                    "Failed to find path with the map "
+                    "choose try another one")
                 font_size = 44
-                len_error_text = pr.measure_text(error_text, font_size)
-                pr.draw_text(error_text, int((self.width - len_error_text) / 2), int(self.height - font_size), font_size, pr.RED)
+                len_error_text = pr.measure_text(
+                    error_text, font_size)
+                pr.draw_text(
+                    error_text,
+                    int((self.width - len_error_text) / 2),
+                    int(self.height - font_size),
+                    font_size, pr.RED)
 
     def gui_hub_id(self, data: list) -> None:
         for hub in data[0]:
             font_size = 16
-            hub_screen_position = pr.get_world_to_screen((int(hub.x) * 5, 2.0, int(hub.y) * 5), self.g_cam)
-            len_id_text = pr.measure_text(f"Hub: {hub.name}", font_size) + 20
-            len_type_text = pr.measure_text(f"Type: {hub.zone}", font_size) + 20
-            len_capacity_text = pr.measure_text(f"Capacity: {hub.max_drones}", font_size) + 20
-            len_text = max(len_id_text, len_type_text, len_capacity_text)
-            rect = pr.Rectangle(int(hub_screen_position.x - (len_text / 2)), int(hub_screen_position.y - 5), len_text, font_size * 3 + 10)
-            pr.draw_rectangle(int(rect.x), int(rect.y), int(rect.width), int(rect.height), pr.Color(0, 0, 0, 120))
-            pr.draw_text(f"Hub: {hub.name}\nType: {hub.zone}\nCapacity: {hub.max_drones}", int(hub_screen_position.x - (len_text / 2) + 10), int(hub_screen_position.y), font_size, pr.RAYWHITE)
+            hub_world_pos = (
+                int(hub.x) * 5, 2.0, int(hub.y) * 5)
+            hub_screen_position = (
+                pr.get_world_to_screen(
+                    hub_world_pos, self.g_cam))
+            hub_label = f"Hub: {hub.name}"
+            type_label = f"Type: {hub.zone}"
+            capacity_label = (
+                f"Capacity: {hub.max_drones}")
+            len_id_text = (pr.measure_text(
+                hub_label, font_size) + 20)
+            len_type_text = (pr.measure_text(
+                type_label, font_size) + 20)
+            len_capacity_text = (pr.measure_text(
+                capacity_label, font_size) + 20)
+            len_text = max(
+                len_id_text, len_type_text,
+                len_capacity_text)
+            rect_x = int(
+                hub_screen_position.x - (len_text / 2))
+            rect = pr.Rectangle(
+                rect_x, int(hub_screen_position.y - 5),
+                len_text, font_size * 3 + 10)
+            pr.draw_rectangle(
+                int(rect.x), int(rect.y),
+                int(rect.width), int(rect.height),
+                pr.Color(0, 0, 0, 120))
+            hub_info = (
+                f"Hub: {hub.name}\n"
+                f"Type: {hub.zone}\n"
+                f"Capacity: {hub.max_drones}")
+            pr.draw_text(
+                hub_info,
+                int(hub_screen_position.x -
+                    (len_text / 2) + 10),
+                int(hub_screen_position.y), font_size,
+                pr.RAYWHITE)
 
     def frame_counter(self):
         self.current_frame += 1
@@ -412,15 +526,19 @@ class Window:
             self.current_frame = 0
 
     def load_planet_model(self) -> None:
-        self.planet_model["error"] = pr.load_model("assets/planet_error.gltf")
-        self.planet_model["green"] = pr.load_model("assets/planet_green.gltf")
-        self.planet_model["red"] = pr.load_model("assets/planet_red.gltf")
-        self.planet_model["blue"] = pr.load_model("assets/planet_blue.gltf")
-        self.planet_model["orange"] = pr.load_model("assets/planet_orange.gltf")
-        self.planet_model["purple"] = pr.load_model("assets/planet_purple.gltf")
-        self.planet_model["gold"] = pr.load_model("assets/planet_gold.gltf")
-        self.planet_model["cyan"] = pr.load_model("assets/planet_cyan.gltf")
-        self.planet_model["yellow"] = pr.load_model("assets/planet_yellow.gltf")
+        models = {
+            "error": "assets/planet_error.gltf",
+            "green": "assets/planet_green.gltf",
+            "red": "assets/planet_red.gltf",
+            "blue": "assets/planet_blue.gltf",
+            "orange": "assets/planet_orange.gltf",
+            "purple": "assets/planet_purple.gltf",
+            "gold": "assets/planet_gold.gltf",
+            "cyan": "assets/planet_cyan.gltf",
+            "yellow": "assets/planet_yellow.gltf",
+        }
+        for color, path in models.items():
+            self.planet_model[color] = pr.load_model(path)
 
     def main_loop(self) -> None:
         drones_path: list = []

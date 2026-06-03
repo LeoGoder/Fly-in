@@ -79,9 +79,11 @@ class BellmanFord:
         start_name = self.all_hubs[0].name
         end_name = self.all_hubs[-1].name
         nb_drones: int = self.all_hubs[0].nb_drones
+        max_drones: int = self.hubs_dict[start_name].max_drones
         path: list = [[] for _ in range(nb_drones)]
         timed_path: list = [[] for _ in range(nb_drones)]
         reservation: dict = {}
+        connection_reservation: dict = {}
         for i in range(nb_drones):
             costs = {hub.name: float('inf') for hub in self.all_hubs}
             costs[start_name] = 0
@@ -90,6 +92,7 @@ class BellmanFord:
                 for conn in self.hub_connection:
                     forward = (conn.from_hub, conn.to_hub)
                     backward = (conn.to_hub, conn.from_hub)
+                    max_connection_capacity = conn.max_link_capacity
                     for actual_hub, neighbour_hub in [forward, backward]:
                         if self.find_cost_hub(neighbour_hub) == float('inf'):
                             continue
@@ -98,19 +101,24 @@ class BellmanFord:
                         estimation_turn = costs[actual_hub] + self.find_cost_hub(neighbour_hub)
                         futur_drones_neighbour = reservation.get((neighbour_hub, estimation_turn), 0)
                         max_capacity = self.hubs_dict[neighbour_hub].max_drones
+                        travel_cost = self.find_cost_hub(neighbour_hub)
                         waiting_turn = 0
-                        if int(futur_drones_neighbour) >= int(max_capacity):
-                            waiting_turn = 0
-                            max_waiting_turn = 10
-                            while waiting_turn < max_waiting_turn:
-                                waiting_turn += 1
-                                estimation_turn = costs[actual_hub] + self.find_cost_hub(neighbour_hub) + waiting_turn
-                                futur_drones_neighbour = reservation.get((neighbour_hub, estimation_turn), 0)
-                                if int(futur_drones_neighbour) < int(max_capacity):
-                                    break
-                            if waiting_turn == max_waiting_turn:
-                                continue
-                        new_cost = costs[actual_hub] + self.find_cost_hub(neighbour_hub) + waiting_turn
+                        # waiting capabilities
+                        # if int(futur_drones_neighbour) >= int(max_capacity):
+                        waiting_turn = 0
+                        max_waiting_turn = max_drones
+                        while waiting_turn < int(max_waiting_turn) + 5:
+                            departure_turn = costs[actual_hub] + waiting_turn
+                            arrival_turn = departure_turn + travel_cost
+                            # estimation_turn = costs[actual_hub] + self.find_cost_hub(neighbour_hub) + waiting_turn
+                            futur_drones_neighbour = reservation.get((neighbour_hub, arrival_turn), 0)
+                            futur_connection_drones = connection_reservation.get(((actual_hub, neighbour_hub), departure_turn), 0)
+                            if int(futur_drones_neighbour) < int(max_capacity) and int(futur_connection_drones) < int(max_connection_capacity):
+                                break
+                            waiting_turn += 1
+                        if waiting_turn >= int(max_waiting_turn) + 5:
+                            continue
+                        new_cost = costs[actual_hub] + travel_cost + waiting_turn
                         if new_cost < costs[neighbour_hub]:
                             costs[neighbour_hub] = new_cost
                             parents[neighbour_hub] = actual_hub
@@ -132,14 +140,16 @@ class BellmanFord:
                             for _ in range(int(wait)):
                                 timed_path[i].append(hub)
             # Update reservation
-            for hub in path[i]:
-                turn = int(costs[hub])
-                reservation[(hub, turn)] = reservation.get((hub, turn), 0) + 1
+            if timed_path[i]:
+                for turn, hub in enumerate(timed_path[i]):
+                    reservation[(hub, turn)] = reservation.get((hub, turn), 0) + 1
+                for turn in range(len(timed_path[i]) - 1):
+                    current_hub = timed_path[i][turn]
+                    next_hub = timed_path[i][turn + 1]
+                    if current_hub != next_hub:
+                        connection_reservation[((current_hub, next_hub), turn)] = connection_reservation.get(((current_hub, next_hub), turn), 0) + 1
+        print(timed_path)
         self.fill_path(timed_path)
         self.output_file(timed_path)
         global_state["Current"] = GlobalState.SIMULATION
-        # print(path)
-        # print(reservation)
-        # print(costs)
-        print(timed_path)
         return timed_path

@@ -129,6 +129,8 @@ class Window:
                     self.drones_index = 0
                     self.number_drone_move = []
                     self.last_drones_position = []
+                    self.g_cam.position = pr.Vector3(0.0, 20.0, 20.0)
+                    self.g_cam.target = pr.Vector3(0.0, 0.0, 0.0)
             except Exception as e:
                 print(e)
                 print(type(self.file_choose))

@@ -2,6 +2,7 @@ import os
 import random
 import pyray as pr
 
+from typing import Any
 from color import Color
 from global_state import GlobalState
 from gui.file_tree import FileTree
@@ -275,7 +276,7 @@ class Window:
         if pr.is_key_pressed(pr.KeyboardKey.KEY_R):
             self.drones_index = 0
 
-    def get_hub_for_drones(self, name: str) -> Hub:
+    def get_hub_for_drones(self, name: str) -> Hub | Any:
         i = 0
         len_hub = len(self.data[0])
         while i < len_hub:
@@ -520,7 +521,7 @@ class Window:
                 int(hub_screen_position.y), font_size,
                 pr.RAYWHITE)
 
-    def frame_counter(self):
+    def frame_counter(self) -> None:
         self.current_frame += 1
         if self.current_frame > self.max_fps:
             self.current_frame = 0

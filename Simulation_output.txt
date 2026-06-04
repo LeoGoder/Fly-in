@@ -1,11 +1,14 @@
-D0-fast_junction D1-slow_path1 
-D0-fast_path D1-slow_path2 D2-fast_junction D3-slow_path1 
-D0-merge_point D1-merge_point D2-fast_path D3-slow_path2 D4-fast_junction 
-D0-goal D1-goal D2-merge_point D3-merge_point D4-fast_path 
-D2-goal D3-goal D4-merge_point 
-D4-goal 
-
-
-
-
-
+D0-gate_hell1 
+D0-maze_trap_a1 D1-gate_hell1 
+D0-maze_trap_a2 D1-maze_trap_a1 D2-gate_hell1 
+D0-micro_gate1 D1-maze_trap_a2 D2-maze_trap_a1 D3-gate_hell1 
+D0-overflow_hell1 D1-micro_gate1 D2-maze_trap_a2 D3-maze_trap_a1 D4-gate_hell1 
+D0-conv_restricted1 D1-overflow_hell1 D2-micro_gate1 D3-maze_trap_a2 D4-maze_trap_a1 D5-gate_hell1 
+D0-conv_restricted2 D1-conv_restricted1 D2-overflow_hell1 D3-micro_gate1 D4-maze_trap_a2 D5-maze_trap_a1 D6-gate_hell1 
+D0-conv_restricted3 D1-conv_restricted2 D2-conv_restricted1 D3-overflow_hell1 D4-micro_gate1 D5-maze_trap_a2 D6-maze_trap_a1 D7-gate_hell1 
+D0-final_merge D1-conv_restricted3 D2-conv_restricted2 D3-conv_restricted1 D4-overflow_hell1 D5-micro_gate1 D6-maze_trap_a2 D7-maze_trap_a1 D8-gate_hell1 
+D0-final_torture1 D1-final_merge D2-conv_restricted3 D3-conv_restricted2 D4-conv_restricted1 D5-overflow_hell1 D6-micro_gate1 D7-maze_trap_a2 D8-maze_trap_a1 D9-gate_hell1 
+D0-final_torture2 D1-final_torture1 D2-final_merge D3-conv_restricted3 D4-conv_restricted2 D5-conv_restricted1 D6-overflow_hell1 D7-micro_gate1 D8-maze_trap_a2 D9-maze_trap_a1 D10-gate_hell1 
+D0-final_torture3 D1-final_torture2 D2-final_torture1 D3-final_merge D4-conv_restricted3 D5-conv_restricted2 D6-conv_restricted1 D7-overflow_hell1 D8-micro_gate1 D9-maze_trap_a2 D10-maze_trap_a1 D11-gate_hell1 
+D0-final_torture4 D1-final_torture3 D2-final_torture2 D3-final_torture1 D4-final_merge D5-conv_restricted3 D6-conv_restricted2 D7-conv_restricted1 D8-overflow_hell1 D9-micro_gate1 D10-maze_trap_a2 D11-maze_trap_a1 D12-gate_hell1 
+D0-final_torture5 D1-final_torture4 D2-final_torture3 D3-final_torture2 D4-final_torture1 D5-final_merge D6-conv_restricted3 D7-conv_restricted2 D8-conv_restricted1 D9-overflow_hell1 D10-micro_gate1 D11-maze_trap_a2 D12-maze_trap_a1 D13-gate_hell1 

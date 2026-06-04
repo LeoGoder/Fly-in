@@ -3,6 +3,9 @@ from gui.error_popup import ErrorPopup
 import pyray as pr
 from hub import Hub
 from connection import Connection
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from window import Window
 import os
 
 
@@ -38,7 +41,7 @@ class Parsing:
             return False
         return True
 
-    def check_zone_name(self, r_data: list):
+    def check_zone_name(self, r_data: list) -> None:
         buffer_name: list = []
         for hub in r_data[0]:
             if hub.name not in buffer_name:
@@ -248,7 +251,7 @@ found: {connection.from_hub} - \
 found: {hub.x} - {hub.y}")
 
     def check_file(self, path: str, global_state: dict,
-                   window) -> list:
+                   window: 'Window') -> list:
         r_data: list = [[], [], []]
         raw_data: list = []
         temp_nb_drones: int = 0
@@ -282,9 +285,8 @@ found: {hub.x} - {hub.y}")
                 print(f"Caught error {e}")
                 self.draw_error = True
                 self.error_text = str(e)
-            print(temp_nb_drones)
             if type(temp_nb_drones) is not int:
-                if temp_nb_drones.isdigit() is False:
+                if not raw_data[0][1].isdigit():
                     self.draw_error = True
                     self.error_text = ("Caught error, nb_drones is \
 not a number or is negatives")

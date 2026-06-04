@@ -218,6 +218,16 @@ class Window:
                     pr.draw_cube(
                         position, 1.0, 1.0, 1.0, color_choice
                     )
+                case "None":
+                    pr.draw_model_ex(
+                        self.planet_model["yellow"],
+                        position,
+                        pr.Vector3(0, 1, 0),
+                        self.planet_rotation,
+                        pr.Vector3(1.5, 1.5, 1.5),
+                        pr.WHITE,
+                    )
+
                 case _:
                     pr.draw_model_ex(
                         self.planet_model["error"],

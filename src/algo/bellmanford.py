@@ -1,4 +1,5 @@
 from global_state import GlobalState
+from hub import Hub
 
 
 class BellmanFord:

@@ -213,6 +213,15 @@ class Window:
                         pr.Vector3(1.5, 1.5, 1.5),
                         pr.WHITE,
                     )
+                case "black":
+                    pr.draw_model_ex(
+                        self.planet_model["black"],
+                        position,
+                        pr.Vector3(0, 1, 0),
+                        self.planet_rotation,
+                        pr.Vector3(1.5, 1.5, 1.5),
+                        pr.WHITE,
+                    )
                 case "rainbow":
                     color_choice = random.choice(list(Color)).value
                     pr.draw_cube(
@@ -301,11 +310,18 @@ class Window:
         i = 0
         for drones in path:
             try:
-                hub = self.get_hub_for_drones(
-                    drones[self.drones_index])
+                if isinstance(drones[self.drones_index], str):
+                    hub = self.get_hub_for_drones(
+                        drones[self.drones_index])
+                    hub_x = hub.x
+                    hub_y = hub.y
+                else:
+                    hub_x = drones[self.drones_index].x
+                    hub_y = drones[self.drones_index].y
+
                 target_position = pr.Vector3(
-                    int(hub.x) * 5, 2.0,
-                    int(hub.y) * 5)
+                    float(hub_x) * 5, 2.0,
+                    float(hub_y) * 5)
                 if self.last_drones_position[i] != target_position:
                     dx = (target_position.x -
                           self.last_drones_position[i].x)
@@ -393,14 +409,14 @@ class Window:
                          pr.RAYWHITE)
             # show max turn and actual turn
             max_turn_text = (
-                f"Max Turn: {self.drones_index_max + 1}")
+                f"Max Turn: {self.drones_index_max}")
             len_max_turn_text = (
                 pr.measure_text(max_turn_text, 24) + 20)
             pr.draw_text(max_turn_text,
                          self.width - len_max_turn_text, 10,
                          24, pr.RAYWHITE)
             actual_turn_text = (
-                f"Actual Turn: {self.drones_index + 1}")
+                f"Actual Turn: {self.drones_index}")
             len_actual_turn_text = (
                 pr.measure_text(actual_turn_text, 24) + 20)
             pr.draw_text(actual_turn_text,
@@ -547,6 +563,7 @@ class Window:
             "gold": "assets/planet_gold.gltf",
             "cyan": "assets/planet_cyan.gltf",
             "yellow": "assets/planet_yellow.gltf",
+            "black": "assets/planet_black.gltf",
         }
         for color, path in models.items():
             self.planet_model[color] = pr.load_model(path)

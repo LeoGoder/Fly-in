@@ -3,3 +3,5 @@ class Connection:
         self.from_hub = from_hub
         self.to_hub = to_hub
         self.max_link_capacity = max_link_capacity
+        self.x = 0
+        self.y = 0

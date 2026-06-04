@@ -1,5 +1,4 @@
 from global_state import GlobalState
-from hub import Hub
 
 
 class BellmanFord:
@@ -111,31 +110,25 @@ class BellmanFord:
                         waiting_turn = 0
                         # waiting capabilities
                         waiting_turn = 0
-                        max_waiting_turn = max_drones
-                        while waiting_turn < int(max_waiting_turn) + 5:
+                        max_waiting_turn = max_drones * 3
+                        while waiting_turn < int(max_waiting_turn):
                             departure_turn = costs[actual_hub] + waiting_turn
                             arrival_turn = departure_turn + travel_cost
-                            futur_drones_neighbour = reservation.get(
+                            hub_ok = reservation.get(
                                 (neighbour_hub, arrival_turn),
                                 0,
-                            )
-                            futur_connection_drones = (
-                                connection_reservation.get(
-                                    (
-                                        (actual_hub, neighbour_hub),
-                                        departure_turn,
-                                    ),
-                                    0,
-                                )
+                            ) < int(max_capacity)
+                            connection_ok = all(connection_reservation.get(
+                                ((actual_hub, neighbour_hub), departure_turn + t),
+                                0, ) < int(max_connection_capacity)
+                                for t in range(int(travel_cost))
                             )
                             if (
-                                int(futur_drones_neighbour) < int(max_capacity)
-                                and int(futur_connection_drones)
-                                < int(max_connection_capacity)
+                                hub_ok and connection_ok
                             ):
                                 break
                             waiting_turn += 1
-                        if waiting_turn >= int(max_waiting_turn) + 5:
+                        if waiting_turn >= int(max_waiting_turn):
                             continue
                         new_cost = (
                             costs[actual_hub]
@@ -162,6 +155,8 @@ class BellmanFord:
                             wait = costs[next_hub] - costs[hub] - travel_cost
                             for _ in range(int(wait)):
                                 timed_path[i].append(hub)
+                            for _ in range(int(travel_cost) - 1):
+                                timed_path[i].append(next_hub)
             # Update reservation
             if timed_path[i]:
                 for turn, hub in enumerate(timed_path[i]):
@@ -172,13 +167,18 @@ class BellmanFord:
                     current_hub = timed_path[i][turn]
                     next_hub = timed_path[i][turn + 1]
                     if current_hub != next_hub:
-                        connection_reservation[
-                            ((current_hub, next_hub), turn)
-                        ] = connection_reservation.get(
-                            ((current_hub, next_hub), turn),
-                            0,
-                        ) + 1
+                        t_cost = self.find_cost_hub(next_hub)
+                        departure_turn = turn + 1 - t_cost
+                        for t in range(t_cost):
+                            connection_reservation[
+                                ((current_hub, next_hub), departure_turn + t)
+                            ] = connection_reservation.get(
+                                ((current_hub, next_hub), departure_turn + t),
+                                0,
+                            ) + 1
         print(timed_path)
+        print(reservation)
+        print(connection_reservation)
         self.fill_path(timed_path)
         self.output_file(timed_path)
         global_state["Current"] = GlobalState.SIMULATION

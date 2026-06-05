@@ -250,6 +250,33 @@ class Window:
                         pr.Vector3(1.5, 1.5, 1.5),
                         pr.WHITE,
                     )
+                case "crimson":
+                    pr.draw_model_ex(
+                        self.planet_model["crimson"],
+                        position,
+                        pr.Vector3(0, 1, 0),
+                        self.planet_rotation,
+                        pr.Vector3(1.5, 1.5, 1.5),
+                        pr.WHITE,
+                    )
+                case "maroon":
+                    pr.draw_model_ex(
+                        self.planet_model["maroon"],
+                        position,
+                        pr.Vector3(0, 1, 0),
+                        self.planet_rotation,
+                        pr.Vector3(1.5, 1.5, 1.5),
+                        pr.WHITE,
+                    )
+                case "brown":
+                    pr.draw_model_ex(
+                        self.planet_model["brown"],
+                        position,
+                        pr.Vector3(0, 1, 0),
+                        self.planet_rotation,
+                        pr.Vector3(1.5, 1.5, 1.5),
+                        pr.WHITE,
+                    )
                 case "rainbow":
                     if self.current_frame % 5 == 0:
                         self.color_choice = random.choice(list(Color)).value
@@ -596,6 +623,9 @@ class Window:
             "lime": "assets/planet_lime.gltf",
             "magenta": "assets/planet_magenta.gltf",
             "darkred": "assets/planet_darkred.gltf",
+            "crimson": "assets/planet_crimson.gltf",
+            "maroon": "assets/planet_maroon.gltf",
+            "brown": "assets/planet_brown.gltf",
         }
         for color, path in models.items():
             self.planet_model[color] = pr.load_model(path)

@@ -85,6 +85,7 @@ class Window:
         self.number_drone_move: list = []
         self.auto_play: bool = False
         self.show_info: bool = True
+        self.color_choice = random.choice(list(Color)).value
 
     def start_window(self) -> None:
         pr.set_config_flags(pr.ConfigFlags.FLAG_WINDOW_RESIZABLE)
@@ -222,10 +223,38 @@ class Window:
                         pr.Vector3(1.5, 1.5, 1.5),
                         pr.WHITE,
                     )
+                case "lime":
+                    pr.draw_model_ex(
+                        self.planet_model["lime"],
+                        position,
+                        pr.Vector3(0, 1, 0),
+                        self.planet_rotation,
+                        pr.Vector3(1.5, 1.5, 1.5),
+                        pr.WHITE,
+                    )
+                case "magenta":
+                    pr.draw_model_ex(
+                        self.planet_model["magenta"],
+                        position,
+                        pr.Vector3(0, 1, 0),
+                        self.planet_rotation,
+                        pr.Vector3(1.5, 1.5, 1.5),
+                        pr.WHITE,
+                    )
+                case "darkred":
+                    pr.draw_model_ex(
+                        self.planet_model["darkred"],
+                        position,
+                        pr.Vector3(0, 1, 0),
+                        self.planet_rotation,
+                        pr.Vector3(1.5, 1.5, 1.5),
+                        pr.WHITE,
+                    )
                 case "rainbow":
-                    color_choice = random.choice(list(Color)).value
+                    if self.current_frame % 5 == 0:
+                        self.color_choice = random.choice(list(Color)).value
                     pr.draw_cube(
-                        position, 1.0, 1.0, 1.0, color_choice
+                        position, 1.0, 1.0, 1.0, self.color_choice
                     )
                 case "None":
                     pr.draw_model_ex(
@@ -564,6 +593,9 @@ class Window:
             "cyan": "assets/planet_cyan.gltf",
             "yellow": "assets/planet_yellow.gltf",
             "black": "assets/planet_black.gltf",
+            "lime": "assets/planet_lime.gltf",
+            "magenta": "assets/planet_magenta.gltf",
+            "darkred": "assets/planet_darkred.gltf",
         }
         for color, path in models.items():
             self.planet_model[color] = pr.load_model(path)

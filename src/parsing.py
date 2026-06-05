@@ -119,7 +119,7 @@ invalid".format(arg[0])
                     type_hub="start_hub",
                     zone=hub_option_parsed["zone"],
                     color=hub_option_parsed["color"],
-                    max_drones=hub_option_parsed["max_drones"])
+                    max_drones=temp_nb_drones)
             except (ValueError, IndexError) as e:
                 print(f"Caught error {e}")
                 self.draw_error = True
@@ -147,7 +147,7 @@ invalid".format(arg[0])
                     type_hub="end_hub",
                     zone=hub_option_parsed["zone"],
                     color=hub_option_parsed["color"],
-                    max_drones=hub_option_parsed["max_drones"])
+                    max_drones=temp_nb_drones)
             except (ValueError, IndexError) as e:
                 print(f"Caught error {e}")
                 self.draw_error = True

@@ -100,14 +100,28 @@ class BellmanFord:
                         travel_cost = self.find_cost_hub(neighbour_hub)
                         # waiting capabilities
                         waiting_turn = 0
-                        max_waiting_turn = max_drones * 3
+                        max_waiting_turn = nb_drones * 5
+                        valid_path = False
                         while waiting_turn < int(max_waiting_turn):
                             departure_turn = costs[actual_hub] + waiting_turn
+                            if waiting_turn > 0:
+                                if actual_hub == start_name:
+                                    current_cap = max_drones * 1
+                                else:
+                                    current_cap = self.hubs_dict[actual_hub].max_drones
+                                if reservation.get((actual_hub, departure_turn), 0) >= int(current_cap):
+                                    break
                             arrival_turn = departure_turn + travel_cost
-                            hub_ok = reservation.get(
-                                (neighbour_hub, arrival_turn),
-                                0,
-                            ) < int(max_capacity)
+                            if self.hubs_dict[neighbour_hub].zone == "restricted": 
+                                hub_ok = all(
+                                            reservation.get((neighbour_hub, departure_turn + t), 0) < int(max_capacity)
+                                            for t in range(1, int(travel_cost) + 1)
+                                        )
+                            else:
+                                hub_ok = reservation.get(
+                                    (neighbour_hub, arrival_turn),
+                                    0,
+                                ) < int(max_capacity)
                             connection_ok = all(connection_reservation.get(
                                 ((actual_hub, neighbour_hub),
                                  departure_turn + t),
@@ -115,9 +129,12 @@ class BellmanFord:
                                 for t in range(int(travel_cost))
                             )
                             if hub_ok and connection_ok:
+                                valid_path = True
                                 break
                             waiting_turn += 1
                         if waiting_turn >= int(max_waiting_turn):
+                            continue
+                        if not valid_path:
                             continue
                         new_cost = (
                             costs[actual_hub]
@@ -160,7 +177,6 @@ class BellmanFord:
                     if current_hub != next_hub:
                         t_cost = self.find_cost_hub(next_hub)
                         departure_turn = turn + 1 - t_cost
-
                         for t in range(int(t_cost)):
                             connection_reservation[
                                 ((current_hub, next_hub), departure_turn + t)
@@ -205,7 +221,11 @@ class BellmanFord:
                             conn_obj.y = (prev_y + curr_y) / 2
                             visual_path[i][turn] = conn_obj
 
+        # print(reservation)
+        # print(connection_reservation)
+        # print(timed_path)
         self.fill_path(visual_path)
+        print(timed_path)
         self.output_file(timed_path)
         global_state["Current"] = GlobalState.SIMULATION
         return visual_path

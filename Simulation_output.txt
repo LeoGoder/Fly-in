@@ -1,12 +1,6 @@
-D0-maze_a1 D1-maze_a1 
-D0-maze_a2 D1-maze_b1 D2-maze_a1 D3-maze_a1 
-D0-maze_c2 D1-maze_b2 D2-maze_a2 D3-maze_b1 D4-maze_a1 D5-maze_a1 
-D0-bottleneck D1-maze_c2 D2-maze_c2 D3-maze_b2 D4-maze_b1 D5-maze_a2 D6-maze_a1 D7-maze_a1 
-D0-final_stretch1 D1-bottleneck D3-maze_c2 D4-maze_b2 D5-maze_b2 D6-maze_b1 
-D0-goal D1-final_stretch1 D2-bottleneck D4-maze_c2 D6-maze_b2 D7-maze_b1 
-D1-goal D2-final_stretch1 D3-bottleneck D5-maze_c2 D7-maze_b2 
-D2-goal D3-final_stretch1 D4-bottleneck D6-maze_c2 
-D3-goal D4-final_stretch1 D5-bottleneck D7-maze_c2 
-D4-goal D5-final_stretch1 D6-bottleneck 
-D5-goal D6-final_stretch1 D7-bottleneck 
-D6-goal D7-final_stretch1 
+D0-fast_junction D2-slow_path1 
+D0-fast_path D1-fast_junction 
+D0-merge_point D1-fast_path D2-slow_path2 D3-fast_junction 
+D0-goal D1-merge_point D2-merge_point D3-fast_path D4-fast_junction 
+D1-goal D2-goal D3-merge_point D4-fast_path 
+D3-goal D4-merge_point 

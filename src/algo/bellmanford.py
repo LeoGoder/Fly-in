@@ -109,15 +109,27 @@ class BellmanFord:
                                 if actual_hub == start_name:
                                     current_cap = max_drones * 1
                                 else:
-                                    current_cap = self.hubs_dict[actual_hub].max_drones
-                                if reservation.get((actual_hub, departure_turn), 0) >= int(current_cap):
+                                    current_cap = (
+                                        self.hubs_dict[actual_hub].max_drones
+                                    )
+                                if (
+                                    reservation.get(
+                                        (actual_hub, departure_turn), 0
+                                    )
+                                    >= int(current_cap)
+                                ):
                                     break
                             arrival_turn = departure_turn + travel_cost
-                            if self.hubs_dict[neighbour_hub].zone == "restricted":
+                            if (
+                                self.hubs_dict[neighbour_hub].zone ==
+                                "restricted"
+                            ):
                                 hub_ok = all(
-                                            reservation.get((neighbour_hub, departure_turn + t), 0) < int(max_capacity)
-                                            for t in range(1, int(travel_cost) + 1)
-                                        )
+                                    reservation.get(
+                                        (neighbour_hub, departure_turn + t), 0
+                                    ) < int(max_capacity)
+                                    for t in range(1, int(travel_cost) + 1)
+                                )
                             else:
                                 hub_ok = reservation.get(
                                     (neighbour_hub, arrival_turn),
@@ -142,9 +154,19 @@ class BellmanFord:
                             + travel_cost
                             + waiting_turn
                         )
-                        is_priority = 1 if self.hubs_dict[neighbour_hub].zone == "priority" else 0
+                        is_priority = (
+                            1
+                            if self.hubs_dict[neighbour_hub].zone == "priority"
+                            else 0
+                        )
                         new_priority = priorities[actual_hub] + is_priority
-                        if new_cost < costs[neighbour_hub] or (new_cost == costs[neighbour_hub] and new_priority > priorities[neighbour_hub]):
+                        if (
+                            new_cost < costs[neighbour_hub]
+                            or (
+                                new_cost == costs[neighbour_hub]
+                                and new_priority > priorities[neighbour_hub]
+                            )
+                        ):
                             costs[neighbour_hub] = new_cost
                             priorities[neighbour_hub] = new_priority
                             parents[neighbour_hub] = actual_hub

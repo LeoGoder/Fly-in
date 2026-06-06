@@ -86,6 +86,7 @@ class BellmanFord:
             costs = {hub.name: float('inf') for hub in self.all_hubs}
             costs[start_name] = 0
             parents = {hub.name: None for hub in self.all_hubs}
+            priorities = {hub.name: 0 for hub in self.all_hubs}
             for _ in range(len(self.all_hubs) - 1):
                 for conn in self.hub_connection:
                     forward = (conn.from_hub, conn.to_hub)
@@ -112,7 +113,7 @@ class BellmanFord:
                                 if reservation.get((actual_hub, departure_turn), 0) >= int(current_cap):
                                     break
                             arrival_turn = departure_turn + travel_cost
-                            if self.hubs_dict[neighbour_hub].zone == "restricted": 
+                            if self.hubs_dict[neighbour_hub].zone == "restricted":
                                 hub_ok = all(
                                             reservation.get((neighbour_hub, departure_turn + t), 0) < int(max_capacity)
                                             for t in range(1, int(travel_cost) + 1)
@@ -141,8 +142,11 @@ class BellmanFord:
                             + travel_cost
                             + waiting_turn
                         )
-                        if new_cost < costs[neighbour_hub]:
+                        is_priority = 1 if self.hubs_dict[neighbour_hub].zone == "priority" else 0
+                        new_priority = priorities[actual_hub] + is_priority
+                        if new_cost < costs[neighbour_hub] or (new_cost == costs[neighbour_hub] and new_priority > priorities[neighbour_hub]):
                             costs[neighbour_hub] = new_cost
+                            priorities[neighbour_hub] = new_priority
                             parents[neighbour_hub] = actual_hub
 
             # Reconstruct path

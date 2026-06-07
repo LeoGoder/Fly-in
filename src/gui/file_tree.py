@@ -1,5 +1,6 @@
 import pyray as pr
 import os
+from typing import Any
 from global_state import GlobalState
 
 
@@ -8,29 +9,29 @@ class FileTree():
         self.path: str = "."
         self.view: pr.Rectangle = pr.Rectangle(0, 0, 0, 0)
         self.scroll: pr.Vector2 = pr.Vector2(0, 0)
-        self.dirs: list = self.get_dir(self.path)
-        self.files: list = self.get_files(self.path)
-        self.last_path: list = []
+        self.dirs: list[str] = self.get_dir(self.path)
+        self.files: list[str] = self.get_files(self.path)
+        self.last_path: list[str] = []
 
-    def get_dir(self, path: str) -> list:
-        not_included_dirs: list = ["__pycache__", ".git", ".venv",
-                                   ".mypy_cache"]
-        dirs_list: list = [
+    def get_dir(self, path: str) -> list[str]:
+        not_included_dirs: list[str] = ["__pycache__", ".git", ".venv",
+                                        ".mypy_cache"]
+        dirs_list: list[str] = [
             d for d in os.listdir(path)
             if os.path.isdir(os.path.join(path,
                              d)) and d not in not_included_dirs
         ]
         return dirs_list
 
-    def get_files(self, path: str) -> list:
-        files_list: list = [
+    def get_files(self, path: str) -> list[str]:
+        files_list: list[str] = [
             f for f in os.listdir(path)
             if os.path.isfile(os.path.join(path, f))
         ]
         return files_list
 
     def select_map(self, win_width: int, win_height: int,
-                   global_state: dict) -> str:
+                   global_state: dict[str, Any]) -> str:
         items_height: int = 35
         total_content_height: int = (len(self.dirs) +
                                      len(self.files)) * items_height

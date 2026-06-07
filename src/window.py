@@ -57,7 +57,7 @@ class Window:
     def __init__(self) -> None:
         self.width: int = 0
         self.height: int = 0
-        self.glob_state: dict = {"Current": GlobalState.START}
+        self.glob_state: dict[str, Any] = {"Current": GlobalState.START}
         self.file_choose: str = ""
         self.file_tree: FileTree = FileTree()
         self.parsing: Parsing = Parsing()
@@ -69,20 +69,20 @@ class Window:
         self.max_fps: int = 60
         self.scale: int = 1
         self.shader: pr.Shader
-        self.data: list = [[], [], []]
+        self.data: list[Any] = [[], [], []]
         self.dt: float
         self.change_map: bool = False
         self.show_change_map: bool = False
         self.color: Color
         self.spaceship_model: pr.Model
-        self.planet_model: dict = {}
+        self.planet_model: dict[str, Any] = {}
         self.planet_rotation: float = 0.0
         self.bellman: BellmanFord
         self.choice: str
         self.drones_index: int = 0
         self.drones_index_max: int = 0
-        self.last_drones_position: list = []
-        self.number_drone_move: list = []
+        self.last_drones_position: list[Any] = []
+        self.number_drone_move: list[Any] = []
         self.auto_play: bool = False
         self.show_info: bool = True
         self.color_choice = random.choice(list(Color)).value
@@ -137,7 +137,7 @@ class Window:
                 print(e)
                 print(type(self.file_choose))
 
-    def mode3d_scene_manager(self, data: list) -> None:
+    def mode3d_scene_manager(self, data: list[Any]) -> None:
         self.cam.move_cam(self.dt)
         for hub in data[0]:
             position = pr.Vector3(int(hub.x) * 5, 0.0, int(hub.y) * 5)
@@ -331,7 +331,7 @@ class Window:
                     int(to_hub.y) * 5)
                 pr.draw_line_3d(from_pos, to_pos, pr.WHITE)
 
-    def init_drones_position(self, path: list) -> None:
+    def init_drones_position(self, path: list[Any]) -> None:
         for drones in path:
             try:
                 hub = self.get_hub_for_drones(
@@ -369,7 +369,7 @@ class Window:
             i += 1
         return self.data[0][0]
 
-    def draw_drones(self, path: list) -> None:
+    def draw_drones(self, path: list[Any]) -> None:
         self.drones_index_input()
         speed = 5
         i = 0
@@ -511,7 +511,7 @@ class Window:
             self.draw_controls()
         pr.draw_fps(10, 10)
 
-    def calculate_number_drone_move(self, path: list) -> None:
+    def calculate_number_drone_move(self, path: list[Any]) -> None:
         self.number_drone_move.append(0)
         for drone_path in range(1, self.drones_index_max + 1):
             drone_move = 0
@@ -531,7 +531,7 @@ class Window:
             else:
                 self.show_info = False
 
-    def gui_drones_id(self, path: list) -> None:
+    def gui_drones_id(self, path: list[Any]) -> None:
         i = 0
         for _ in path:
             try:
@@ -571,7 +571,7 @@ class Window:
                     int(self.height - font_size),
                     font_size, pr.RED)
 
-    def gui_hub_id(self, data: list) -> None:
+    def gui_hub_id(self, data: list[Any]) -> None:
         for hub in data[0]:
             font_size = 16
             hub_world_pos = (
@@ -641,7 +641,7 @@ class Window:
             self.planet_model[color] = pr.load_model(path)
 
     def main_loop(self) -> None:
-        drones_path: list = []
+        drones_path: list[Any] = []
         pr.set_target_fps(self.max_fps)
         res_loc = pr.get_shader_location(self.shader, "resolution")
         time_loc = pr.get_shader_location(self.shader, "time")

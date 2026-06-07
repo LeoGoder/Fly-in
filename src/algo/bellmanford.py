@@ -1,13 +1,15 @@
+from typing import Any
 from global_state import GlobalState
 
 
 class BellmanFord:
-    def __init__(self, data: list) -> None:
-        self.new_data: list = data.copy()
-        self.all_hubs: list = self.new_data[0].copy()
-        self.hub_connection: list = self.new_data[1].copy()
-        self.hubs_dict: dict = {hub.name: hub for hub in self.all_hubs}
-        self.final_path: list = []
+    def __init__(self, data: list[Any]) -> None:
+        self.new_data: list[Any] = data.copy()
+        self.all_hubs: list[Any] = self.new_data[0].copy()
+        self.hub_connection: list[Any] = self.new_data[1].copy()
+        self.hubs_dict: dict[str, Any] = {hub.name: hub for hub
+                                          in self.all_hubs}
+        self.final_path: list[Any] = []
         self.cost: int = 0
         self.RED_PRINT: str = "\033[91m"
         self.RESET_PRINT: str = "\033[0m"
@@ -26,8 +28,8 @@ class BellmanFord:
             case _:
                 return 1
 
-    def get_connection(self, hub_name: str) -> list:
-        r_lst: list = []
+    def get_connection(self, hub_name: str) -> list[Any]:
+        r_lst: list[Any] = []
         for connection in self.hub_connection:
             if hub_name in connection.from_hub:
                 r_lst.append(connection.to_hub)
@@ -35,7 +37,7 @@ class BellmanFord:
                 r_lst.append(connection.from_hub)
         return r_lst
 
-    def fill_path(self, path: list) -> list:
+    def fill_path(self, path: list[Any]) -> list[Any]:
         len_max = 0
         for p in path:
             temp_len = len(p)
@@ -47,7 +49,7 @@ class BellmanFord:
 
         return path
 
-    def get_max_len(self, path: list) -> int:
+    def get_max_len(self, path: list[Any]) -> int:
         return_max = 0
         for p in path:
             temp_len = len(p)
@@ -55,7 +57,7 @@ class BellmanFord:
                 return_max = temp_len
         return return_max
 
-    def output_file(self, path: list) -> None:
+    def output_file(self, path: list[Any]) -> None:
         max_len = self.get_max_len(path)
         i = 1
         try:
@@ -73,15 +75,15 @@ class BellmanFord:
             print(f"{self.RED_PRINT}Caught Error while creating "
                   f"output file: {e}{self.RESET_PRINT}")
 
-    def main_loop(self, global_state: dict) -> list:
+    def main_loop(self, global_state: dict[str, Any]) -> list[Any]:
         start_name = self.all_hubs[0].name
         end_name = self.all_hubs[-1].name
         nb_drones: int = self.all_hubs[0].nb_drones
         max_drones: int = self.hubs_dict[start_name].max_drones
-        path: list = [[] for _ in range(nb_drones)]
-        timed_path: list = [[] for _ in range(nb_drones)]
-        reservation: dict = {}
-        connection_reservation: dict = {}
+        path: list[Any] = [[] for _ in range(nb_drones)]
+        timed_path: list[Any] = [[] for _ in range(nb_drones)]
+        reservation: dict[Any, int] = {}
+        connection_reservation: dict[Any, int] = {}
         for i in range(nb_drones):
             costs = {hub.name: float('inf') for hub in self.all_hubs}
             costs[start_name] = 0

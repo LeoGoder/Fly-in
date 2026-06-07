@@ -3,7 +3,7 @@ from gui.error_popup import ErrorPopup
 import pyray as pr
 from hub import Hub
 from connection import Connection
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from window import Window
 import os
@@ -15,16 +15,16 @@ class Parsing:
         self.draw_error: bool = False
         self.error_text: str = ""
 
-    def is_comments(self, line_splits: list) -> bool:
+    def is_comments(self, line_splits: list[Any]) -> bool:
         if '#' in line_splits:
             return False
         return True
 
     def check_zone_type(self, zone_verif: str) -> bool:
-        all_zone_possible: list = ["normal",
-                                   "blocked",
-                                   "restricted",
-                                   "priority"]
+        all_zone_possible: list[str] = ["normal",
+                                        "blocked",
+                                        "restricted",
+                                        "priority"]
         if zone_verif not in all_zone_possible:
             return False
         return True
@@ -41,8 +41,8 @@ class Parsing:
             return False
         return True
 
-    def check_zone_name(self, r_data: list) -> None:
-        buffer_name: list = []
+    def check_zone_name(self, r_data: list[Any]) -> None:
+        buffer_name: list[str] = []
         for hub in r_data[0]:
             if hub.name not in buffer_name:
                 buffer_name.append(hub.name)
@@ -63,7 +63,7 @@ hub name"
                 self.error_text = f"""Parsing error, name:
 {connection.from_hub}:\ndon't exist in hub name"""
 
-    def check_capacity_positive(self, r_data: list) -> None:
+    def check_capacity_positive(self, r_data: list[Any]) -> None:
         for hub in r_data[0]:
             if int(hub.max_drones) < 0:
                 self.draw_error = True
@@ -78,8 +78,9 @@ can't be negative: {}".format(
                     connection.max_link_capacity)
                 self.error_text = msg + " found"
 
-    def add_hub(self, data: list, temp_nb_drones: int, r_data: list) -> int:
-        hub_option_parsed: dict = {
+    def add_hub(self, data: list[Any],
+                temp_nb_drones: int, r_data: list[Any]) -> int:
+        hub_option_parsed: dict[str, Any] = {
             "zone": "normal",
             "color": "None",
             "max_drones": 1
@@ -163,7 +164,7 @@ entered for "
                 return 1
         return 0
 
-    def add_connection(self, data: list, r_data: list) -> int:
+    def add_connection(self, data: list[Any], r_data: list[Any]) -> int:
         options_default = {"max_link_capacity": 1}
         if data[0] == "connection:":
             if len(data) > 2:
@@ -203,11 +204,11 @@ entered for "
             r_data[1].append(connection_instance)
         return 0
 
-    def get_file_name(self, r_data: list, path: str) -> None:
+    def get_file_name(self, r_data: list[Any], path: str) -> None:
         path_split = path.split('/')
         r_data[2] = path_split[-1]
 
-    def check_max_drones_number(self, r_data: list) -> None:
+    def check_max_drones_number(self, r_data: list[Any]) -> None:
         try:
             for hub in r_data[0]:
                 int(hub.max_drones)
@@ -215,7 +216,7 @@ entered for "
             self.draw_error = True
             self.error_text = f"{e}"
 
-    def check_max_link_capacity(self, r_data: list) -> None:
+    def check_max_link_capacity(self, r_data: list[Any]) -> None:
         try:
             for connection in r_data[1]:
                 int(connection.max_link_capacity)
@@ -223,8 +224,8 @@ entered for "
             self.draw_error = True
             self.error_text = f"{e}"
 
-    def check_duplicate_connection(self, r_data: list) -> None:
-        buffer_connection: list = []
+    def check_duplicate_connection(self, r_data: list[Any]) -> None:
+        buffer_connection: list[tuple[str, str]] = []
         for connection in r_data[1]:
             if (((connection.from_hub, connection.to_hub)
                  not in buffer_connection)
@@ -239,8 +240,8 @@ entered for "
 found: {connection.from_hub} - \
 {connection.to_hub}")
 
-    def check_position_duplicate(self, r_data: list) -> None:
-        buffer_position: list = []
+    def check_position_duplicate(self, r_data: list[Any]) -> None:
+        buffer_position: list[tuple[int, int]] = []
         for hub in r_data[0]:
             if (hub.x, hub.y) not in buffer_position:
                 buffer_position.append((hub.x, hub.y))
@@ -250,10 +251,10 @@ found: {connection.from_hub} - \
                     f"Parsing error, duplicate position \
 found: {hub.x} - {hub.y}")
 
-    def check_file(self, path: str, global_state: dict,
-                   window: 'Window') -> list:
-        r_data: list = [[], [], []]
-        raw_data: list = []
+    def check_file(self, path: str, global_state: dict[str, Any],
+                   window: 'Window') -> list[Any]:
+        r_data: list[Any] = [[], [], []]
+        raw_data: list[Any] = []
         temp_nb_drones: int = 0
         self.get_file_name(r_data, path)
         print(r_data[2])
@@ -262,8 +263,6 @@ found: {hub.x} - {hub.y}")
                 with open(path, 'r') as f:
                     for line in f.readlines():
                         line_split = line.split()
-                        if self.is_comments is False:
-                            continue
                         if (self.is_comments(line_split) and
                                 line_split != []):
                             raw_data.append(line_split)

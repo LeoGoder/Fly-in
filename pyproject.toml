@@ -7,3 +7,7 @@ requires-python = ">=3.13"
 dependencies = [
     "raylib>=5.5.0.4",
 ]
+
+[[tool.mypy.overrides]]
+module = "pyray.*"
+ignore_missing_imports = true

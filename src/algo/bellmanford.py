@@ -250,7 +250,6 @@ class BellmanFord:
                             visual_path[i][turn] = conn_obj
 
         self.fill_path(visual_path)
-        print(timed_path)
         self.output_file(timed_path)
         global_state["Current"] = GlobalState.SIMULATION
         return visual_path

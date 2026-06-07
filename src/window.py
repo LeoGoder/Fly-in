@@ -522,7 +522,6 @@ class Window:
                     if position_before != position_current:
                         drone_move += 1
             self.number_drone_move.append(drone_move)
-        print(self.number_drone_move)
 
     def show_info_input(self) -> None:
         if pr.is_key_pressed(pr.KeyboardKey.KEY_I):

@@ -203,15 +203,13 @@ class BellmanFord:
                     next_hub = timed_path[i][turn + 1]
 
                     if current_hub != next_hub:
-                        t_cost = self.find_cost_hub(next_hub)
-                        departure_turn = turn + 1 - t_cost
-                        for t in range(int(t_cost)):
-                            connection_reservation[
-                                ((current_hub, next_hub), departure_turn + t)
-                            ] = connection_reservation.get(
-                                ((current_hub, next_hub), departure_turn + t),
-                                0,
-                            ) + 1
+                        departure_turn = turn
+                        connection_reservation[
+                            ((current_hub, next_hub), departure_turn)
+                        ] = connection_reservation.get(
+                            ((current_hub, next_hub), departure_turn),
+                            0,
+                        ) + 1
 
         visual_path = [path.copy() for path in timed_path]
         for i in range(nb_drones):

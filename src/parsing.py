@@ -85,7 +85,6 @@ can't be negative: {}".format(
             "color": "None",
             "max_drones": 1
         }
-        # print(data)
         if len(data) > 4:
             args = data[4]
             if ("[" not in args or "]" not in args):
@@ -111,7 +110,6 @@ invalid".format(arg[0])
                 self.draw_error = True
                 self.error_text = str(e)
                 return 1
-            # print(hub_option_parsed)
         if data[0] == "start_hub:":
             try:
                 hub_instance = Hub(
@@ -292,7 +290,6 @@ not a number or is negatives")
 
         # check number of start and end hub
         if self.draw_error is False:
-            # print(raw_data)
             count_start_hub = 0
             count_end_hub = 0
             for i in range(len(raw_data)):
@@ -312,7 +309,6 @@ end_hub not equal to 1")
         # create new data for data list
         if self.draw_error is False:
             for data in raw_data:
-                # print(data)
                 self.add_hub(data, temp_nb_drones, r_data)
                 self.add_connection(data, r_data)
             for hub in r_data[0]:

@@ -249,9 +249,6 @@ class BellmanFord:
                             conn_obj.y = (prev_y + curr_y) / 2
                             visual_path[i][turn] = conn_obj
 
-        # print(reservation)
-        # print(connection_reservation)
-        # print(timed_path)
         self.fill_path(visual_path)
         print(timed_path)
         self.output_file(timed_path)

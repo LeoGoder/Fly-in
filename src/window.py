@@ -311,7 +311,7 @@ class Window:
                         pr.Vector3(1.5, 1.5, 1.5),
                         pr.WHITE,
                     )
-        self.planet_rotation += 0.3
+        self.planet_rotation += 10 * self.dt
         if self.planet_rotation > 360:
             self.planet_rotation = 0
         for connection in data[1]:
@@ -641,6 +641,8 @@ class Window:
 
     def main_loop(self) -> None:
         drones_path: list[Any] = []
+        monitor = pr.get_current_monitor()
+        self.max_fps = pr.get_monitor_refresh_rate(monitor)
         pr.set_target_fps(self.max_fps)
         res_loc = pr.get_shader_location(self.shader, "resolution")
         time_loc = pr.get_shader_location(self.shader, "time")

@@ -84,7 +84,7 @@ class Window:
         self.last_drones_position: list[Any] = []
         self.number_drone_move: list[Any] = []
         self.auto_play: bool = False
-        self.show_info: bool = True
+        self.show_info: bool = False
         self.color_choice = random.choice(list(Color)).value
 
     def start_window(self) -> None:
@@ -679,6 +679,7 @@ class Window:
                     self.drones_index_max = len(drones_path[0]) - 1
                     self.init_drones_position(drones_path)
                     self.calculate_number_drone_move(drones_path)
+                    self.show_info = True
             pr.begin_mode_3d(self.g_cam)
             if self.glob_state["Current"] == GlobalState.SIMULATION:
                 self.mode3d_scene_manager(self.data)

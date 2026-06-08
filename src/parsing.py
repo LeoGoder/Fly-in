@@ -50,13 +50,16 @@ class Parsing:
                 self.draw_error = True
                 self.error_text = "Parsing error, duplicate name \
 found"
+                return
             if "-" in hub.name:
                 self.draw_error = True
                 self.error_text = "Parsing error, found '-' in \
 hub name"
+                return
             if " " in hub.name:
                 self.draw_error = True
                 self.error_text = "Parsing error, found space in hub name"
+                return
         for connection in r_data[1]:
             if connection.from_hub not in buffer_name:
                 self.draw_error = True
@@ -315,9 +318,9 @@ end_hub not equal to 1")
                 print(hub.name, hub.x, hub.y, hub.type_hub,
                       hub.zone, hub.color, hub.max_drones)
         if self.draw_error is False:
-            self.check_duplicate_connection(r_data)
-        if self.draw_error is False:
             self.check_zone_name(r_data)
+        if self.draw_error is False:
+            self.check_duplicate_connection(r_data)
         if self.draw_error is False:
             self.check_max_drones_number(r_data)
         if self.draw_error is False:
@@ -348,4 +351,5 @@ end_hub not equal to 1")
                     window.file_tree.get_files(window.file_tree.path))
                 self.error_text = ""
                 global_state["Current"] = GlobalState.START
+        print(global_state["Current"])
         return r_data

@@ -62,7 +62,7 @@ class BellmanFord:
         i = 1
         try:
             with open("Simulation_output.txt", 'w') as f:
-                while i < max_len - 1:
+                while i < max_len:
                     y = 0
                     for p in path:
                         if i < len(p):

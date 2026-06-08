@@ -90,7 +90,6 @@ class FileTree():
             except FileNotFoundError:
                 print("Can't go more back")
                 self.path = "."
-        # Only return a selected file, otherwise return the current directory path
         if selected_file:
             return selected_file
         return self.path

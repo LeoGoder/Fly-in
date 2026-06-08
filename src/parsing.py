@@ -258,7 +258,9 @@ found: {hub.x} - {hub.y}")
         raw_data: list[Any] = []
         temp_nb_drones: int = 0
         self.get_file_name(r_data, path)
-        print(r_data[2])
+        if os.path.isdir(path):
+            self.draw_error = True
+            self.error_text = f"Error: {path} is a directory, not a file"
         if self.draw_error is False:
             try:
                 with open(path, 'r') as f:
@@ -270,7 +272,7 @@ found: {hub.x} - {hub.y}")
 
             except (FileNotFoundError, PermissionError,
                     UnicodeDecodeError) as e:
-                print(f"Caught error {e}")
+                print(f"Caught error {e} chemin: {path}")
                 self.draw_error = True
                 self.error_text = str(e)
         if self.draw_error is False:
@@ -351,5 +353,4 @@ end_hub not equal to 1")
                     window.file_tree.get_files(window.file_tree.path))
                 self.error_text = ""
                 global_state["Current"] = GlobalState.START
-        print(global_state["Current"])
         return r_data

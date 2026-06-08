@@ -53,6 +53,7 @@ class FileTree():
             int(self.view.width),
             int(self.view.height)
         )
+        selected_file: str = ""
 
         for _, dir in enumerate(self.dirs):
             if pr.gui_label_button(pr.Rectangle(self.view.x + 5,
@@ -71,9 +72,9 @@ class FileTree():
                                                 30), f"#010#{file}"):
                 global_state["Current"] = GlobalState.PARSING
                 if (self.path != "."):
-                    self.path += f"/{file}"
+                    selected_file = self.path + f"/{file}"
                 else:
-                    self.path = file
+                    selected_file = file
             current_y += items_height
         pr.end_scissor_mode()
 
@@ -89,4 +90,7 @@ class FileTree():
             except FileNotFoundError:
                 print("Can't go more back")
                 self.path = "."
+        # Only return a selected file, otherwise return the current directory path
+        if selected_file:
+            return selected_file
         return self.path

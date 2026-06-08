@@ -311,7 +311,9 @@ start_hub not equal to 1")
                 self.error_text = ("Error on parsing number of \
 end_hub not equal to 1")
 
-        # create new data for data list
+        if self.draw_error is False:
+            self.check_max_drones_number(r_data)
+
         if self.draw_error is False:
             for data in raw_data:
                 self.add_hub(data, temp_nb_drones, r_data)
@@ -323,8 +325,6 @@ end_hub not equal to 1")
             self.check_zone_name(r_data)
         if self.draw_error is False:
             self.check_duplicate_connection(r_data)
-        if self.draw_error is False:
-            self.check_max_drones_number(r_data)
         if self.draw_error is False:
             self.check_position_duplicate(r_data)
         if self.draw_error is False:

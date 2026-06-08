@@ -639,6 +639,10 @@ class Window:
         for color, path in models.items():
             self.planet_model[color] = pr.load_model(path)
 
+    def unload_planet_model(self) -> None:
+        for model in self.planet_model.values():
+            pr.unload_model(model)
+
     def main_loop(self) -> None:
         drones_path: list[Any] = []
         monitor = pr.get_current_monitor()
@@ -679,7 +683,6 @@ class Window:
                     self.drones_index_max = len(drones_path[0]) - 1
                     self.init_drones_position(drones_path)
                     self.calculate_number_drone_move(drones_path)
-                    self.show_info = True
             pr.begin_mode_3d(self.g_cam)
             if self.glob_state["Current"] == GlobalState.SIMULATION:
                 self.mode3d_scene_manager(self.data)
@@ -695,4 +698,6 @@ class Window:
             self.frame_counter()
         pr.unload_shader(self.shader)
         pr.unload_font(font)
+        self.unload_planet_model()
+        pr.unload_model(self.spaceship_model)
         pr.close_window()

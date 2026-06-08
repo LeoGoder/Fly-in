@@ -121,7 +121,7 @@ invalid".format(arg[0])
                     type_hub="start_hub",
                     zone=hub_option_parsed["zone"],
                     color=hub_option_parsed["color"],
-                    max_drones=temp_nb_drones)
+                    max_drones=hub_option_parsed["max_drones"])
             except (ValueError, IndexError) as e:
                 print(f"Caught error {e}")
                 self.draw_error = True
@@ -312,15 +312,17 @@ start_hub not equal to 1")
 end_hub not equal to 1")
 
         if self.draw_error is False:
-            self.check_max_drones_number(r_data)
-
-        if self.draw_error is False:
             for data in raw_data:
                 self.add_hub(data, temp_nb_drones, r_data)
                 self.add_connection(data, r_data)
             for hub in r_data[0]:
                 print(hub.name, hub.x, hub.y, hub.type_hub,
                       hub.zone, hub.color, hub.max_drones)
+        if self.draw_error is False:
+            self.check_max_drones_number(r_data)
+        if self.draw_error is False:
+            r_data[0][0].max_drones = temp_nb_drones
+            r_data[0][-1].max_drones = temp_nb_drones
         if self.draw_error is False:
             self.check_zone_name(r_data)
         if self.draw_error is False:

@@ -509,6 +509,10 @@ class Window:
             pr.draw_text(nb_drones_txt,
                          self.width - len_nb_drones, 100, 24,
                          pr.RAYWHITE)
+            auto_animation_txt = f"Autoplay: {self.auto_play}"
+            auto_anim_len = pr.measure_text(auto_animation_txt, 24) + 20
+            pr.draw_text(auto_animation_txt, self.width - auto_anim_len,
+                         130, 24, pr.RAYWHITE)
             self.draw_controls()
         pr.draw_fps(10, 10)
 

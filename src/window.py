@@ -138,7 +138,8 @@ class Window:
                 print(type(self.file_choose))
 
     def mode3d_scene_manager(self, data: list[Any]) -> None:
-        self.cam.move_cam(self.dt)
+        if self.show_change_map is False:
+            self.cam.move_cam(self.dt)
         for hub in data[0]:
             position = pr.Vector3(int(hub.x) * 5, 0.0, int(hub.y) * 5)
             match hub.color:

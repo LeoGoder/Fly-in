@@ -321,8 +321,12 @@ end_hub not equal to 1")
         if self.draw_error is False:
             self.check_max_drones_number(r_data)
         if self.draw_error is False:
-            r_data[0][0].max_drones = temp_nb_drones
-            r_data[0][-1].max_drones = temp_nb_drones
+            for data in r_data[0]:
+                print(data.type_hub)
+                if data.type_hub == "start_hub":
+                    data.max_drones = temp_nb_drones
+                if data.type_hub == "end_hub":
+                    data.max_drones = temp_nb_drones
         if self.draw_error is False:
             self.check_zone_name(r_data)
         if self.draw_error is False:

@@ -66,6 +66,11 @@ hub name"
                 self.error_text = f"""Parsing error, name:
 {connection.from_hub}:\ndon't exist in hub name"""
 
+            elif connection.to_hub not in buffer_name:
+                self.draw_error = True
+                self.error_text = f"""Parsing error, name:
+{connection.to_hub}:\ndon't exist in hub name"""
+
     def check_capacity_positive(self, r_data: list[Any]) -> None:
         for hub in r_data[0]:
             if int(hub.max_drones) < 0:

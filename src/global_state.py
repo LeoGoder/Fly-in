@@ -5,4 +5,6 @@ class GlobalState(IntEnum):
     START = 1
     PARSING = 2
     FIND = 3
-    SIMULATION = 4
+    THREAD = 4
+    TRANSIT = 5
+    SIMULATION = 6

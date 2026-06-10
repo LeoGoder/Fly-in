@@ -1,6 +1,7 @@
 import os
 import random
 import pyray as pr
+import threading
 
 from typing import Any
 from color import Color
@@ -86,6 +87,7 @@ class Window:
         self.auto_play: bool = False
         self.show_info: bool = False
         self.color_choice = random.choice(list(Color)).value
+        self.thread_algo: threading.Thread
 
     def start_window(self) -> None:
         pr.set_config_flags(pr.ConfigFlags.FLAG_WINDOW_RESIZABLE)
@@ -312,9 +314,7 @@ class Window:
                         pr.Vector3(1.5, 1.5, 1.5),
                         pr.WHITE,
                     )
-        self.planet_rotation += 10 * self.dt
-        if self.planet_rotation > 360:
-            self.planet_rotation = 0
+        self.planet_rotation_calc()
         for connection in data[1]:
             from_hub: Hub | None = None
             to_hub: Hub | None = None
@@ -331,6 +331,11 @@ class Window:
                     int(to_hub.x) * 5, 0.0,
                     int(to_hub.y) * 5)
                 pr.draw_line_3d(from_pos, to_pos, pr.WHITE)
+
+    def planet_rotation_calc(self) -> None:
+        self.planet_rotation += 10 * self.dt
+        if self.planet_rotation > 360:
+            self.planet_rotation = 0
 
     def init_drones_position(self, path: list[Any]) -> None:
         for drones in path:
@@ -616,6 +621,38 @@ class Window:
                 int(hub_screen_position.y), font_size,
                 pr.RAYWHITE)
 
+    def loading_screen(self) -> None:
+        pr.draw_model_ex(
+            self.planet_model["gold"],
+            pr.Vector3(0, 0, 0),
+            pr.Vector3(0, 1, 0),
+            self.planet_rotation,
+            pr.Vector3(1.5, 1.5, 1.5),
+            pr.WHITE,
+        )
+        pr.draw_model_ex(
+            self.planet_model["yellow"],
+            pr.Vector3(5, 0, 0),
+            pr.Vector3(0, 1, 0),
+            self.planet_rotation,
+            pr.Vector3(1.5, 1.5, 1.5),
+            pr.WHITE,
+        )
+        pr.draw_model_ex(
+            self.planet_model["orange"],
+            pr.Vector3(-5, 0, 0),
+            pr.Vector3(0, 1, 0),
+            self.planet_rotation,
+            pr.Vector3(1.5, 1.5, 1.5),
+            pr.WHITE,
+        )
+        self.planet_rotation_calc()
+
+    def loading_screen_gui(self) -> None:
+        text = "Loading..."
+        len_text = pr.measure_text(text, 34)
+        pr.draw_text(text, int((self.width / 2) - len_text / 2), int(self.height / 1.5), 34, pr.YELLOW)
+
     def frame_counter(self) -> None:
         self.current_frame += 1
         if self.current_frame > self.max_fps:
@@ -650,6 +687,7 @@ class Window:
 
     def main_loop(self) -> None:
         drones_path: list[Any] = []
+        temp_drones_path: list[Any] = []
         monitor = pr.get_current_monitor()
         self.max_fps = pr.get_monitor_refresh_rate(monitor)
         pr.set_target_fps(self.max_fps)
@@ -683,18 +721,33 @@ class Window:
             pr.end_shader_mode()
             if self.glob_state["Current"] == GlobalState.FIND:
                 self.bellman = BellmanFord(self.data)
-                drones_path = self.bellman.main_loop(self.glob_state)
+                self.thread_algo = threading.Thread(target=self.bellman.main_loop, args=(self.glob_state, temp_drones_path))
+                self.thread_algo.start()
+                self.glob_state["Current"] = GlobalState.THREAD
+                # drones_path = self.bellman.main_loop(self.glob_state)
+                # if drones_path != []:
+                #     self.drones_index_max = len(drones_path[0]) - 1
+                #     self.init_drones_position(drones_path)
+                #     self.calculate_number_drone_move(drones_path)
+            pr.begin_mode_3d(self.g_cam)
+            if self.glob_state["Current"] == GlobalState.THREAD:
+                self.loading_screen()
+            if self.glob_state["Current"] == GlobalState.TRANSIT:
+                drones_path = temp_drones_path[0]
                 if drones_path != []:
                     self.drones_index_max = len(drones_path[0]) - 1
                     self.init_drones_position(drones_path)
                     self.calculate_number_drone_move(drones_path)
-            pr.begin_mode_3d(self.g_cam)
+                temp_drones_path.clear()
+                self.glob_state["Current"] = GlobalState.SIMULATION
             if self.glob_state["Current"] == GlobalState.SIMULATION:
                 self.mode3d_scene_manager(self.data)
                 self.draw_drones(drones_path)
                 self.auto_play_animation()
             pr.end_mode_3d()
             self.show_info_input()
+            if self.glob_state["Current"] == GlobalState.THREAD:
+                self.loading_screen_gui()
             if self.show_info is True:
                 self.gui_drones_id(drones_path)
                 self.gui_hub_id(self.data)

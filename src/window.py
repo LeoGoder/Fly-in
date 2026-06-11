@@ -630,7 +630,7 @@ class Window:
 
     def loading_screen(self) -> None:
         pr.draw_model_ex(
-            self.loading_model[0],
+            self.planet_model["yellow"],
             pr.Vector3(0, 0, 0),
             pr.Vector3(0, 1, 0),
             self.planet_rotation,
@@ -638,7 +638,7 @@ class Window:
             pr.WHITE,
         )
         pr.draw_model_ex(
-            self.loading_model[1],
+            self.planet_model["orange"],
             pr.Vector3(5, 0, 0),
             pr.Vector3(0, 1, 0),
             self.planet_rotation,
@@ -646,7 +646,7 @@ class Window:
             pr.WHITE,
         )
         pr.draw_model_ex(
-            self.loading_model[2],
+            self.planet_model["magenta"],
             pr.Vector3(-5, 0, 0),
             pr.Vector3(0, 1, 0),
             self.planet_rotation,
@@ -732,11 +732,6 @@ class Window:
                 self.thread_algo = threading.Thread(target=self.bellman.main_loop, args=(self.glob_state, temp_drones_path))
                 self.thread_algo.start()
                 self.glob_state["Current"] = GlobalState.THREAD
-                # drones_path = self.bellman.main_loop(self.glob_state)
-                # if drones_path != []:
-                #     self.drones_index_max = len(drones_path[0]) - 1
-                #     self.init_drones_position(drones_path)
-                #     self.calculate_number_drone_move(drones_path)
             pr.begin_mode_3d(self.g_cam)
             if self.glob_state["Current"] == GlobalState.THREAD:
                 self.loading_screen()

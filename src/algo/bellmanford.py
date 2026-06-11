@@ -1,12 +1,13 @@
 from typing import Any
 from global_state import GlobalState
+import copy
 
 
 class BellmanFord:
     def __init__(self, data: list[Any]) -> None:
-        self.new_data: list[Any] = data.copy()
-        self.all_hubs: list[Any] = self.new_data[0].copy()
-        self.hub_connection: list[Any] = self.new_data[1].copy()
+        self.new_data: list[Any] = copy.deepcopy(data)
+        self.all_hubs: list[Any] = self.new_data[0]
+        self.hub_connection: list[Any] = self.new_data[1]
         self.hubs_dict: dict[str, Any] = {hub.name: hub for hub
                                           in self.all_hubs}
         self.final_path: list[Any] = []
@@ -249,6 +250,6 @@ class BellmanFord:
 
         self.fill_path(visual_path)
         self.output_file(timed_path)
-        global_state["Current"] = GlobalState.TRANSIT
         res.append(visual_path)
+        global_state["Current"] = GlobalState.TRANSIT
         return visual_path

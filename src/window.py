@@ -88,7 +88,6 @@ class Window:
         self.show_info: bool = False
         self.color_choice = random.choice(list(Color)).value
         self.thread_algo: threading.Thread
-        self.loading_model: list[Any] = [[], [], []]
 
     def start_window(self) -> None:
         pr.set_config_flags(pr.ConfigFlags.FLAG_WINDOW_RESIZABLE)
@@ -136,7 +135,6 @@ class Window:
                     self.last_drones_position = []
                     self.g_cam.position = pr.Vector3(0.0, 20.0, 20.0)
                     self.g_cam.target = pr.Vector3(0.0, 0.0, 0.0)
-                    self.get_random_loading_planet()
             except Exception as e:
                 print(e)
                 print(type(self.file_choose))
@@ -622,11 +620,6 @@ class Window:
                     (len_text / 2) + 10),
                 int(hub_screen_position.y), font_size,
                 pr.RAYWHITE)
-
-    def get_random_loading_planet(self) -> None:
-        self.loading_model[0] = self.planet_model[random.choice(list(self.planet_model.keys()))]
-        self.loading_model[1] = self.planet_model[random.choice(list(self.planet_model.keys()))]
-        self.loading_model[2] = self.planet_model[random.choice(list(self.planet_model.keys()))]
 
     def loading_screen(self) -> None:
         pr.draw_model_ex(

@@ -1,7 +1,9 @@
 class Connection:
-    def __init__(self, from_hub: str, to_hub: str, max_link_capacity: int = 1):
+    def __init__(self, from_hub: str, to_hub: str, max_link_capacity: int = 1,
+                 num_line: int = 0):
         self.from_hub = from_hub
         self.to_hub = to_hub
         self.max_link_capacity = max_link_capacity
         self.x = 0
         self.y = 0
+        self.num_line = num_line

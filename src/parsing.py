@@ -127,7 +127,8 @@ invalid"
                     type_hub="start_hub",
                     zone=hub_option_parsed["zone"],
                     color=hub_option_parsed["color"],
-                    max_drones=hub_option_parsed["max_drones"])
+                    max_drones=hub_option_parsed["max_drones"],
+                    num_line=int(line))
             except (ValueError, IndexError) as e:
                 print(f"line {line}: Caught error start_hub, {e}")
                 self.draw_error = True
@@ -141,7 +142,8 @@ invalid"
                     type_hub="hub",
                     zone=hub_option_parsed["zone"],
                     color=hub_option_parsed["color"],
-                    max_drones=hub_option_parsed["max_drones"])
+                    max_drones=hub_option_parsed["max_drones"],
+                    num_line=int(line))
             except (ValueError, IndexError) as e:
                 print(f"Caught error on line {line}: {e}")
                 self.draw_error = True
@@ -155,7 +157,8 @@ invalid"
                     type_hub="end_hub",
                     zone=hub_option_parsed["zone"],
                     color=hub_option_parsed["color"],
-                    max_drones=temp_nb_drones)
+                    max_drones=temp_nb_drones,
+                    num_line=int(line))
             except (ValueError, IndexError) as e:
                 print(f"Caught error on line {line}: {e}")
                 self.draw_error = True
@@ -202,7 +205,8 @@ entered for "
                 connection_instance = Connection(
                     from_hub=data_split[0],
                     to_hub=data_split[1],
-                    max_link_capacity=options_default["max_link_capacity"])
+                    max_link_capacity=options_default["max_link_capacity"],
+                    num_line=int(line))
             except (ValueError, IndexError) as e:
                 print(f"line {line}: Caught error {e}")
                 self.draw_error = True
@@ -216,24 +220,30 @@ entered for "
         r_data[2] = path_split[-1]
 
     def check_max_drones_number(self, r_data: list[Any]) -> None:
+        line = 0
         try:
             for hub in r_data[0]:
+                line = hub.num_line
                 int(hub.max_drones)
         except ValueError as e:
             self.draw_error = True
-            self.error_text = f"{e}"
+            self.error_text = f"line {line}: {e}"
 
     def check_max_link_capacity(self, r_data: list[Any]) -> None:
+        line = 0
         try:
             for connection in r_data[1]:
+                line = connection.num_line
                 int(connection.max_link_capacity)
         except ValueError as e:
             self.draw_error = True
-            self.error_text = f"{e}"
+            self.error_text = f"line {line}: {e}"
 
     def check_duplicate_connection(self, r_data: list[Any]) -> None:
         buffer_connection: list[tuple[str, str]] = []
+        line = 0
         for connection in r_data[1]:
+            line = connection.num_line
             if (((connection.from_hub, connection.to_hub)
                  not in buffer_connection)
                 and ((connection.to_hub, connection.from_hub)
@@ -243,7 +253,7 @@ entered for "
             else:
                 self.draw_error = True
                 self.error_text = (
-                    f"Parsing error, duplicate connection \
+                    f"line {line}: Parsing error, duplicate connection \
 found: {connection.from_hub} - \
 {connection.to_hub}")
 

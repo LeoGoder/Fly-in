@@ -87,7 +87,8 @@ can't be negative: {}".format(
                 self.error_text = msg + " found"
 
     def add_hub(self, data: list[Any],
-                temp_nb_drones: int, r_data: list[Any]) -> int:
+                temp_nb_drones: int, r_data: list[Any],
+                line: str) -> int:
         hub_option_parsed: dict[str, Any] = {
             "zone": "normal",
             "color": "None",
@@ -97,7 +98,7 @@ can't be negative: {}".format(
             args = data[4]
             if ("[" not in args or "]" not in args):
                 self.draw_error = True
-                self.error_text = "Error with bracket"
+                self.error_text = f"line {line}: Error with bracket"
                 return 1
             args = args.replace('[', '').replace(']', '')
             args = args.split(',')
@@ -106,15 +107,15 @@ can't be negative: {}".format(
                     arg = arg.split("=")
                     if self.check_options_hub(arg[0]) is False:
                         self.draw_error = True
-                        msg = "Error on hub option {} in \
-invalid".format(arg[0])
+                        msg = f"line {line}: Error {arg} option is \
+invalid"
                         self.error_text = msg
                         break
                     if arg:
                         pass
                     hub_option_parsed.update({arg[0]: arg[1]})
             except (IndexError) as e:
-                print(f"Caught error {e}")
+                print(f"Caught error on line {line}: {e}")
                 self.draw_error = True
                 self.error_text = str(e)
                 return 1
@@ -128,7 +129,7 @@ invalid".format(arg[0])
                     color=hub_option_parsed["color"],
                     max_drones=hub_option_parsed["max_drones"])
             except (ValueError, IndexError) as e:
-                print(f"Caught error {e}")
+                print(f"line {line}: Caught error start_hub, {e}")
                 self.draw_error = True
                 self.error_text = str(e)
                 return 1
@@ -142,7 +143,7 @@ invalid".format(arg[0])
                     color=hub_option_parsed["color"],
                     max_drones=hub_option_parsed["max_drones"])
             except (ValueError, IndexError) as e:
-                print(f"Caught error {e}")
+                print(f"Caught error on line {line}: {e}")
                 self.draw_error = True
                 self.error_text = str(e)
                 return 1
@@ -156,7 +157,7 @@ invalid".format(arg[0])
                     color=hub_option_parsed["color"],
                     max_drones=temp_nb_drones)
             except (ValueError, IndexError) as e:
-                print(f"Caught error {e}")
+                print(f"Caught error on line {line}: {e}")
                 self.draw_error = True
                 self.error_text = str(e)
                 return 1
@@ -164,34 +165,34 @@ invalid".format(arg[0])
         if len(r_data[0]) > 0:
             if self.check_zone_type(r_data[0][-1].zone) is False:
                 self.draw_error = True
-                self.error_text = (f"Error on parsing invalid zone \
+                self.error_text = (f"line {line}: Error on parsing invalid zone \
 entered for "
                                    f"{r_data[0][-1].name}")
                 return 1
         return 0
 
-    def add_connection(self, data: list[Any], r_data: list[Any]) -> int:
+    def add_connection(self, data: list[Any], r_data: list[Any], line: str) -> int:
         options_default = {"max_link_capacity": 1}
         if data[0] == "connection:":
             if len(data) > 2:
                 option = data[2]
                 if ("[" not in option or "]" not in option):
                     self.draw_error = True
-                    self.error_text = "Error with bracket in connection"
+                    self.error_text = f"line {line}: Error with bracket in connection"
                     return 1
                 option = option.replace('[', '').replace(']', '')
                 try:
                     option = option.split("=")
                     if self.check_options_connection(option[0]) is False:
                         self.draw_error = True
-                        msg = "Error on connection option \
-{} is invalid".format(option[0])
+                        msg = f"line {line}: Error on connection option \
+{option[0]} is invalid"
                         self.error_text = msg
                     if option:
                         pass
                     options_default.update({option[0]: option[1]})
                 except (IndexError) as e:
-                    print(f"Caught error {e}")
+                    print(f"line {line}: Caught error {e}")
                     self.draw_error = True
                     self.error_text = str(e)
                     return 1
@@ -203,7 +204,7 @@ entered for "
                     to_hub=data_split[1],
                     max_link_capacity=options_default["max_link_capacity"])
             except (ValueError, IndexError) as e:
-                print(f"Caught error {e}")
+                print(f"line {line}: Caught error {e}")
                 self.draw_error = True
                 self.error_text = str(e)
                 return 1
@@ -269,33 +270,37 @@ found: {hub.x} - {hub.y}")
         if self.draw_error is False:
             try:
                 with open(path, 'r') as f:
+                    i = 1
                     for line in f.readlines():
                         line_split = line.split()
                         if (self.is_comments(line_split) and
                                 line_split != []):
-                            raw_data.append(line_split)
-
+                            raw_data.append((line_split, i))
+                        i += 1
             except (FileNotFoundError, PermissionError,
                     UnicodeDecodeError) as e:
                 print(f"Caught error {e} chemin: {path}")
                 self.draw_error = True
                 self.error_text = str(e)
+        print(raw_data)
         if self.draw_error is False:
             try:
-                if raw_data[0][0] != "nb_drones:":
+                content, line = raw_data[0]
+                if content[0] != "nb_drones:":
                     print("Error")
                     self.draw_error = True
-                    self.error_text = "nb_drones not found"
+                    self.error_text = f"line {line}: nb_drones not found"
                 else:
-                    temp_nb_drones = raw_data[0][1]
+                    temp_nb_drones = content[1]
             except (IndexError) as e:
                 print(f"Caught error {e}")
                 self.draw_error = True
                 self.error_text = str(e)
             if type(temp_nb_drones) is not int:
-                if not raw_data[0][1].isdigit():
+                content, line = raw_data[0]
+                if not content[1].isdigit():
                     self.draw_error = True
-                    self.error_text = ("Caught error, nb_drones is \
+                    self.error_text = (f"line {line}:, nb_drones is \
 not a number or is negatives")
 
         # check number of start and end hub
@@ -303,31 +308,39 @@ not a number or is negatives")
             count_start_hub = 0
             count_end_hub = 0
             for i in range(len(raw_data)):
-                count_start_hub += raw_data[i][0].count("start_hub:")
-                count_end_hub += raw_data[i][0].count("end_hub:")
-                if len(raw_data[i]) > 4:
-                    raw_data[i][4:] = [",".join(raw_data[i][4:])]
-            if count_start_hub != 1:
+                content, line = raw_data[i]
+                count_start_hub += content[0].count("start_hub:")
+                count_end_hub += content[0].count("end_hub:")
+                if len(content) > 4:
+                    content[4:] = [",".join(content[4:])]
+                if count_start_hub > 1:
+                    self.draw_error = True
+                    self.error_text = (f"line {line}: multiple \
+start_hub found")
+                    break
+                if count_end_hub > 1:
+                    self.draw_error = True
+                    self.error_text = (f"line {line}: multiple \
+end_hub found")
+                    break
+            if count_start_hub == 0:
                 self.draw_error = True
-                self.error_text = ("Error on parsing number of \
-start_hub not equal to 1")
-            if count_end_hub != 1:
+                self.error_text = ("never found at least one \
+start_hub")
+            if count_end_hub == 0:
                 self.draw_error = True
-                self.error_text = ("Error on parsing number of \
-end_hub not equal to 1")
-
+                self.error_text = ("never found at least one \
+end_hub")
         if self.draw_error is False:
+
             for data in raw_data:
-                self.add_hub(data, temp_nb_drones, r_data)
-                self.add_connection(data, r_data)
-            for hub in r_data[0]:
-                print(hub.name, hub.x, hub.y, hub.type_hub,
-                      hub.zone, hub.color, hub.max_drones)
+                new_data, line = data
+                self.add_hub(new_data, temp_nb_drones, r_data, line)
+                self.add_connection(new_data, r_data, line)
         if self.draw_error is False:
             self.check_max_drones_number(r_data)
         if self.draw_error is False:
             for data in r_data[0]:
-                print(data.type_hub)
                 if data.type_hub == "start_hub":
                     data.max_drones = temp_nb_drones
                 if data.type_hub == "end_hub":

@@ -120,10 +120,9 @@ invalid"
                     if arg:
                         pass
                     hub_option_parsed.update({arg[0]: arg[1]})
-            except (IndexError) as e:
-                print(f"Caught error on line {line}: {e}")
+            except (IndexError):
                 self.draw_error = True
-                self.error_text = str(e)
+                self.error_text = f"Caught error on line {line}"
                 return 1
         if data[0] == "start_hub:":
             try:
@@ -135,10 +134,9 @@ invalid"
                     color=hub_option_parsed["color"],
                     max_drones=hub_option_parsed["max_drones"],
                     num_line=int(line))
-            except (ValueError, IndexError) as e:
-                print(f"line {line}: Caught error start_hub, {e}")
+            except (ValueError, IndexError):
                 self.draw_error = True
-                self.error_text = str(e)
+                self.error_text = f"line {line}: Caught error start_hub"
                 return 1
             r_data[0].append(hub_instance)
         elif data[0] == "hub:":
@@ -150,10 +148,9 @@ invalid"
                     color=hub_option_parsed["color"],
                     max_drones=hub_option_parsed["max_drones"],
                     num_line=int(line))
-            except (ValueError, IndexError) as e:
-                print(f"Caught error on line {line}: {e}")
+            except (ValueError, IndexError):
                 self.draw_error = True
-                self.error_text = str(e)
+                self.error_text = f"Caught error on line {line}"
                 return 1
             r_data[0].append(hub_instance)
         elif data[0] == "end_hub:":
@@ -165,10 +162,9 @@ invalid"
                     color=hub_option_parsed["color"],
                     max_drones=temp_nb_drones,
                     num_line=int(line))
-            except (ValueError, IndexError) as e:
-                print(f"Caught error on line {line}: {e}")
+            except (ValueError, IndexError):
                 self.draw_error = True
-                self.error_text = str(e)
+                self.error_text = f"Caught error on line {line}"
                 return 1
             r_data[0].append(hub_instance)
         if len(r_data[0]) > 0:
@@ -202,10 +198,9 @@ bracket in connection"
                     if option:
                         pass
                     options_default.update({option[0]: option[1]})
-                except (IndexError) as e:
-                    print(f"line {line}: Caught error {e}")
+                except (IndexError):
                     self.draw_error = True
-                    self.error_text = str(e)
+                    self.error_text = f"line {line}: connection args error"
                     return 1
         if data[0] == "connection:":
             data_split = data[1].split("-")
@@ -215,10 +210,9 @@ bracket in connection"
                     to_hub=data_split[1],
                     max_link_capacity=options_default["max_link_capacity"],
                     num_line=int(line))
-            except (ValueError, IndexError) as e:
-                print(f"line {line}: Caught error {e}")
+            except (ValueError, IndexError):
                 self.draw_error = True
-                self.error_text = str(e)
+                self.error_text = f"line {line}: connection args error"
                 return 1
             r_data[1].append(connection_instance)
         return 0
@@ -299,10 +293,9 @@ found: {hub.x} - {hub.y}")
                         i += 1
             except (FileNotFoundError, PermissionError,
                     UnicodeDecodeError) as e:
-                print(f"Caught error {e} chemin: {path}")
+                print(f"Caught error {e} path: {path}")
                 self.draw_error = True
                 self.error_text = str(e)
-        print(raw_data)
         if self.draw_error is False:
             try:
                 content, line = raw_data[0]
@@ -315,7 +308,7 @@ found: {hub.x} - {hub.y}")
             except (IndexError) as e:
                 print(f"Caught error {e}")
                 self.draw_error = True
-                self.error_text = str(e)
+                self.error_text = "Error in first time parsing"
             if type(temp_nb_drones) is not int:
                 content, line = raw_data[0]
                 if not content[1].isdigit():
@@ -338,18 +331,19 @@ not a number or is negatives")
                     self.error_text = (f"line {line}: multiple \
 start_hub found")
                     break
-                if count_end_hub > 1:
+                elif count_end_hub > 1:
                     self.draw_error = True
                     self.error_text = (f"line {line}: multiple \
 end_hub found")
                     break
-            if count_start_hub == 0:
-                self.draw_error = True
-                self.error_text = ("never found at least one \
+            if self.draw_error is False:
+                if count_start_hub == 0:
+                    self.draw_error = True
+                    self.error_text = ("never found at least one \
 start_hub ")
-            if count_end_hub == 0:
-                self.draw_error = True
-                self.error_text = ("never found at least one \
+                if count_end_hub == 0:
+                    self.draw_error = True
+                    self.error_text = ("never found at least one \
 end_hub")
         if self.draw_error is False:
 

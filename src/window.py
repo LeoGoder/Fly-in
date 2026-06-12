@@ -135,6 +135,7 @@ class Window:
                     self.last_drones_position = []
                     self.g_cam.position = pr.Vector3(0.0, 20.0, 20.0)
                     self.g_cam.target = pr.Vector3(0.0, 0.0, 0.0)
+                    self.show_info = False
             except Exception as e:
                 print(e)
                 print(type(self.file_choose))

@@ -652,7 +652,8 @@ class Window:
         font_size = 64
         text = f"Map: {self.data[2]} Loading..."
         len_text = pr.measure_text(text, font_size)
-        pr.draw_text(text, int((self.width / 2) - len_text / 2), int(self.height / 1.5), font_size, pr.YELLOW)
+        pr.draw_text(text, int((self.width / 2) - len_text / 2),
+                     int(self.height / 1.5), font_size, pr.YELLOW)
 
     def frame_counter(self) -> None:
         self.current_frame += 1
@@ -722,7 +723,10 @@ class Window:
             pr.end_shader_mode()
             if self.glob_state["Current"] == GlobalState.FIND:
                 self.bellman = BellmanFord(self.data)
-                self.thread_algo = threading.Thread(target=self.bellman.main_loop, args=(self.glob_state, temp_drones_path))
+                self.thread_algo = threading.Thread(
+                        target=self.bellman.main_loop,
+                        args=(self.glob_state, temp_drones_path)
+                )
                 self.thread_algo.start()
                 self.glob_state["Current"] = GlobalState.THREAD
             pr.begin_mode_3d(self.g_cam)

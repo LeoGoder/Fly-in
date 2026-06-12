@@ -76,7 +76,8 @@ class BellmanFord:
             print(f"{self.RED_PRINT}Caught Error while creating "
                   f"output file: {e}{self.RESET_PRINT}")
 
-    def main_loop(self, global_state: dict[str, Any], res: list[Any]) -> list[Any]:
+    def main_loop(self, global_state: dict[str, Any],
+                  res: list[Any]) -> list[Any]:
         start_name = self.all_hubs[0].name
         end_name = self.all_hubs[-1].name
         nb_drones: int = self.all_hubs[0].nb_drones

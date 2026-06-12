@@ -43,47 +43,53 @@ class Parsing:
 
     def check_zone_name(self, r_data: list[Any]) -> None:
         buffer_name: list[str] = []
+        line = 0
         for hub in r_data[0]:
+            line = hub.num_line
             if hub.name not in buffer_name:
                 buffer_name.append(hub.name)
             elif hub.name in buffer_name:
                 self.draw_error = True
-                self.error_text = "Parsing error, duplicate name \
-found"
+                self.error_text = f"line {line}: Parsing error,\
+  duplicate name found"
                 return
             if "-" in hub.name:
                 self.draw_error = True
-                self.error_text = "Parsing error, found '-' in \
+                self.error_text = f"line {line}: Parsing error, found '-' in \
 hub name"
                 return
             if " " in hub.name:
                 self.draw_error = True
-                self.error_text = "Parsing error, found space in hub name"
+                self.error_text = f"line {line}: Parsing error, \
+found space in hub name"
                 return
         for connection in r_data[1]:
+            line = connection.num_line
             if connection.from_hub not in buffer_name:
                 self.draw_error = True
-                self.error_text = f"""Parsing error, name:
+                self.error_text = f"""line {line}: Parsing error, name:
 {connection.from_hub}:\ndon't exist in hub name"""
 
             elif connection.to_hub not in buffer_name:
                 self.draw_error = True
-                self.error_text = f"""Parsing error, name:
+                self.error_text = f"""line {line}: Parsing error, name:
 {connection.to_hub}:\ndon't exist in hub name"""
 
     def check_capacity_positive(self, r_data: list[Any]) -> None:
+        line = 0
         for hub in r_data[0]:
+            line = hub.num_line
             if int(hub.max_drones) < 0:
                 self.draw_error = True
-                msg = "Parsing error, max_drones can't be \
-negative: {}".format(hub.max_drones)
+                msg = f"line {line}: Parsing error, max_drones can't be \
+negative: {hub.max_drones}"
                 self.error_text = msg + " found"
         for connection in r_data[1]:
+            line = connection.num_line
             if int(connection.max_link_capacity) < 0:
                 self.draw_error = True
-                msg = "Parsing error, max_link_capacity \
-can't be negative: {}".format(
-                    connection.max_link_capacity)
+                msg = f"line {line}: Parsing error, max_link_capacity \
+can't be negative: {connection.max_link_capacity}"
                 self.error_text = msg + " found"
 
     def add_hub(self, data: list[Any],
@@ -168,20 +174,22 @@ invalid"
         if len(r_data[0]) > 0:
             if self.check_zone_type(r_data[0][-1].zone) is False:
                 self.draw_error = True
-                self.error_text = (f"line {line}: Error on parsing invalid zone \
-entered for "
+                self.error_text = (f"line {line}: Error on parsing \
+ invalid zone entered for "
                                    f"{r_data[0][-1].name}")
                 return 1
         return 0
 
-    def add_connection(self, data: list[Any], r_data: list[Any], line: str) -> int:
+    def add_connection(self, data: list[Any], r_data: list[Any],
+                       line: str) -> int:
         options_default = {"max_link_capacity": 1}
         if data[0] == "connection:":
             if len(data) > 2:
                 option = data[2]
                 if ("[" not in option or "]" not in option):
                     self.draw_error = True
-                    self.error_text = f"line {line}: Error with bracket in connection"
+                    self.error_text = f"line {line}: Error with \
+bracket in connection"
                     return 1
                 option = option.replace('[', '').replace(']', '')
                 try:
@@ -259,13 +267,15 @@ found: {connection.from_hub} - \
 
     def check_position_duplicate(self, r_data: list[Any]) -> None:
         buffer_position: list[tuple[int, int]] = []
+        line = 0
         for hub in r_data[0]:
+            line = hub.num_line
             if (hub.x, hub.y) not in buffer_position:
                 buffer_position.append((hub.x, hub.y))
             else:
                 self.draw_error = True
                 self.error_text = (
-                    f"Parsing error, duplicate position \
+                    f"line {line}: Parsing error, duplicate position \
 found: {hub.x} - {hub.y}")
 
     def check_file(self, path: str, global_state: dict[str, Any],
@@ -336,7 +346,7 @@ end_hub found")
             if count_start_hub == 0:
                 self.draw_error = True
                 self.error_text = ("never found at least one \
-start_hub")
+start_hub ")
             if count_end_hub == 0:
                 self.draw_error = True
                 self.error_text = ("never found at least one \

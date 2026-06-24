@@ -111,11 +111,11 @@ class Window:
             self.width, self.height, self.glob_state
         )
         if self.current_frame % 2 == 0:
-            if self.reverse_title is False:
+            if not self.reverse_title:
                 self.font_size += 1
             if self.font_size > 34:
                 self.reverse_title = True
-            if self.reverse_title is True:
+            if self.reverse_title:
                 self.font_size -= 1
             if self.font_size < 16:
                 self.reverse_title = False
@@ -140,165 +140,28 @@ class Window:
                 print(e)
                 print(type(self.file_choose))
 
-    def mode3d_scene_manager(self, data: list[Any]) -> None:
-        if self.show_change_map is False:
-            self.cam.move_cam(self.dt)
+    def draw_planets(self, data: list[Any]) -> None:
         for hub in data[0]:
             position = pr.Vector3(int(hub.x) * 5, 0.0, int(hub.y) * 5)
-            match hub.color:
-                case "green":
-                    pr.draw_model_ex(
-                        self.planet_model["green"],
-                        position,
-                        pr.Vector3(0, 1, 0),
-                        self.planet_rotation,
-                        pr.Vector3(1.5, 1.5, 1.5),
-                        pr.WHITE,
-                    )
-                case "blue":
-                    pr.draw_model_ex(
-                        self.planet_model["blue"],
-                        position,
-                        pr.Vector3(0, 1, 0),
-                        self.planet_rotation,
-                        pr.Vector3(1.5, 1.5, 1.5),
-                        pr.WHITE,
-                    )
-                case "red":
-                    pr.draw_model_ex(
-                        self.planet_model["red"],
-                        position,
-                        pr.Vector3(0, 1, 0),
-                        self.planet_rotation,
-                        pr.Vector3(1.5, 1.5, 1.5),
-                        pr.WHITE,
-                    )
-                case "orange":
-                    pr.draw_model_ex(
-                        self.planet_model["orange"],
-                        position,
-                        pr.Vector3(0, 1, 0),
-                        self.planet_rotation,
-                        pr.Vector3(1.5, 1.5, 1.5),
-                        pr.WHITE,
-                    )
-                case "purple":
-                    pr.draw_model_ex(
-                        self.planet_model["purple"],
-                        position,
-                        pr.Vector3(0, 1, 0),
-                        self.planet_rotation,
-                        pr.Vector3(1.5, 1.5, 1.5),
-                        pr.WHITE,
-                    )
-                case "gold":
-                    pr.draw_model_ex(
-                        self.planet_model["gold"],
-                        position,
-                        pr.Vector3(0, 1, 0),
-                        self.planet_rotation,
-                        pr.Vector3(1.5, 1.5, 1.5),
-                        pr.WHITE,
-                    )
-                case "cyan":
-                    pr.draw_model_ex(
-                        self.planet_model["cyan"],
-                        position,
-                        pr.Vector3(0, 1, 0),
-                        self.planet_rotation,
-                        pr.Vector3(1.5, 1.5, 1.5),
-                        pr.WHITE,
-                    )
-                case "yellow":
-                    pr.draw_model_ex(
-                        self.planet_model["yellow"],
-                        position,
-                        pr.Vector3(0, 1, 0),
-                        self.planet_rotation,
-                        pr.Vector3(1.5, 1.5, 1.5),
-                        pr.WHITE,
-                    )
-                case "black":
-                    pr.draw_model_ex(
-                        self.planet_model["black"],
-                        position,
-                        pr.Vector3(0, 1, 0),
-                        self.planet_rotation,
-                        pr.Vector3(1.5, 1.5, 1.5),
-                        pr.WHITE,
-                    )
-                case "lime":
-                    pr.draw_model_ex(
-                        self.planet_model["lime"],
-                        position,
-                        pr.Vector3(0, 1, 0),
-                        self.planet_rotation,
-                        pr.Vector3(1.5, 1.5, 1.5),
-                        pr.WHITE,
-                    )
-                case "magenta":
-                    pr.draw_model_ex(
-                        self.planet_model["magenta"],
-                        position,
-                        pr.Vector3(0, 1, 0),
-                        self.planet_rotation,
-                        pr.Vector3(1.5, 1.5, 1.5),
-                        pr.WHITE,
-                    )
-                case "darkred":
-                    pr.draw_model_ex(
-                        self.planet_model["darkred"],
-                        position,
-                        pr.Vector3(0, 1, 0),
-                        self.planet_rotation,
-                        pr.Vector3(1.5, 1.5, 1.5),
-                        pr.WHITE,
-                    )
-                case "crimson":
-                    pr.draw_model_ex(
-                        self.planet_model["crimson"],
-                        position,
-                        pr.Vector3(0, 1, 0),
-                        self.planet_rotation,
-                        pr.Vector3(1.5, 1.5, 1.5),
-                        pr.WHITE,
-                    )
-                case "maroon":
-                    pr.draw_model_ex(
-                        self.planet_model["maroon"],
-                        position,
-                        pr.Vector3(0, 1, 0),
-                        self.planet_rotation,
-                        pr.Vector3(1.5, 1.5, 1.5),
-                        pr.WHITE,
-                    )
-                case "brown":
-                    pr.draw_model_ex(
-                        self.planet_model["brown"],
-                        position,
-                        pr.Vector3(0, 1, 0),
-                        self.planet_rotation,
-                        pr.Vector3(1.5, 1.5, 1.5),
-                        pr.WHITE,
-                    )
-                case "violet":
-                    pr.draw_model_ex(
-                        self.planet_model["violet"],
-                        position,
-                        pr.Vector3(0, 1, 0),
-                        self.planet_rotation,
-                        pr.Vector3(1.5, 1.5, 1.5),
-                        pr.WHITE,
-                    )
-                case "rainbow":
+            try:
+                pr.draw_model_ex(
+                    self.planet_model[hub.color],
+                    position,
+                    pr.Vector3(0, 1, 0),
+                    self.planet_rotation,
+                    pr.Vector3(1.5, 1.5, 1.5),
+                    pr.WHITE,
+                )
+            except KeyError as e:
+                if hub.color == "rainbow":
                     if self.current_frame % 5 == 0:
                         self.color_choice = random.choice(list(Color)).value
                     pr.draw_cube(
                         position, 1.0, 1.0, 1.0, self.color_choice
                     )
-                case "None":
+                else:
                     pr.draw_model_ex(
-                        self.planet_model["yellow"],
+                        self.planet_model["error"],
                         position,
                         pr.Vector3(0, 1, 0),
                         self.planet_rotation,
@@ -306,15 +169,10 @@ class Window:
                         pr.WHITE,
                     )
 
-                case _:
-                    pr.draw_model_ex(
-                        self.planet_model["error"],
-                        position,
-                        pr.Vector3(0, 1, 0),
-                        180.0,
-                        pr.Vector3(1.5, 1.5, 1.5),
-                        pr.WHITE,
-                    )
+    def mode3d_scene_manager(self, data: list[Any]) -> None:
+        if self.show_change_map is False:
+            self.cam.move_cam(self.dt)
+        self.draw_planets(self.data)
         self.planet_rotation_calc()
         for connection in data[1]:
             from_hub: Hub | None = None

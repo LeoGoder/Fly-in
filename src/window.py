@@ -152,7 +152,7 @@ class Window:
                     pr.Vector3(1.5, 1.5, 1.5),
                     pr.WHITE,
                 )
-            except KeyError as e:
+            except KeyError:
                 if hub.color == "rainbow":
                     if self.current_frame % 5 == 0:
                         self.color_choice = random.choice(list(Color)).value
